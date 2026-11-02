@@ -6,10 +6,10 @@ import { GET as warnings } from "../../scripts/lib/warnings";
 export type DataSource = "weather" | "air" | "water" | "warnings";
 const prefix = "szczedrzyk-data-v1:";
 const memory = new Map<DataSource, any>();
-function valid(type: DataSource, data: any) {
+function valid(type: DataSource, data: any, retainWeather = false) {
  if (!data || data.error || !Number.isFinite(Date.parse(data.sourceFetchedAt))) return false;
  const age = Date.now() - Date.parse(data.sourceFetchedAt);
- return age >= -60000 && age < (type === "weather" ? 6 * 3600000 : 7 * 86400000)
+ return age >= -60000 && (type === "weather" && retainWeather || age < (type === "weather" ? 6 * 3600000 : 7 * 86400000))
   && (type === "weather" ? data.current && Array.isArray(data.daily?.time) && Array.isArray(data.hourly?.time)
    : type === "water" ? Array.isArray(data.stations)
    : type === "warnings" ? Array.isArray(data.warnings) && Array.isArray(data.failed) : typeof data.station === "string");
@@ -17,10 +17,10 @@ function valid(type: DataSource, data: any) {
 export function cachedData(type: DataSource) {
  try {
   const value = JSON.parse(localStorage.getItem(prefix + type) || "null");
-  if (valid(type, value) && (!memory.has(type) || Date.parse(value.sourceFetchedAt) > Date.parse(memory.get(type).sourceFetchedAt))) memory.set(type, value);
+  if (valid(type, value, true) && (!memory.has(type) || Date.parse(value.sourceFetchedAt) > Date.parse(memory.get(type).sourceFetchedAt))) memory.set(type, value);
  } catch { /* Storage may be blocked or damaged. */ }
  const data = memory.get(type);
- return valid(type, data) ? data : null;
+ return valid(type, data, true) ? data : null;
 }
 async function publishedData(type: DataSource) {
  try {
@@ -32,7 +32,13 @@ async function publishedData(type: DataSource) {
 }
 export async function refreshData(type: DataSource) {
  let old = cachedData(type);
- if (!old) old = await publishedData(type);
+ if (!old) {
+  old = await publishedData(type);
+  if (old) {
+   memory.set(type, old);
+   try { localStorage.setItem(prefix + type, JSON.stringify(old)); } catch { /* Keep fallback data in memory. */ }
+  }
+ }
  try {
   let data;
   if (type === "weather") {
@@ -56,6 +62,6 @@ export async function refreshData(type: DataSource) {
   try { localStorage.setItem(prefix + type, JSON.stringify(data)); } catch { /* Keep fresh data in memory if storage is full. */ }
   return {data, loading: false, error: false};
  } catch {
-  return {data: old, loading: false, error: true};
+  return {data: type === "weather" && old ? {...old, stale: true} : old, loading: false, error: true};
  }
 }
