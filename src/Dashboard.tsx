@@ -119,7 +119,7 @@ export default function Dashboard() {
  <p className="footer-brand w-full text-center">
    <a href="https://strzelcu.github.io/" className="inline-flex items-center gap-3 text-lg underline underline-offset-2">
      <img src={import.meta.env.BASE_URL + "programista-na-wsi.webp"} alt="" width={48} height={48} loading="lazy" className="shrink-0 object-contain"/>
-     by Programista na wsi
+     Programista na wsi
    </a>
  </p></footer>
  </main>
