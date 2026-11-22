@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { CloudSun, Wind, Waves, MapPin, RefreshCw, Droplets, Thermometer, Gauge, Sun, Cloud, CloudRain, Moon, Sunrise, Sunset, TriangleAlert, ExternalLink, LayoutDashboard, Trash2, ArrowDownRight, ArrowUp } from "lucide-react";
+import { CloudSun, Wind, Waves, MapPin, RefreshCw, Droplets, Thermometer, Gauge, Sun, Cloud, CloudRain, Moon, Sunrise, Sunset, TriangleAlert, ExternalLink, LayoutDashboard, Trash2, ArrowDownRight, ArrowUp, Flower2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cachedData, refreshData } from "./lib/browser-data";
@@ -50,6 +50,14 @@ export default function Dashboard() {
  <section ref={summaryRef} className="card daily-summary" aria-labelledby="daily-summary-title">
   <h2 id="daily-summary-title">Na dziś</h2>
   <div className="daily-summary-grid">
+   <a className="daily-summary-item" href="#air-measurements">
+    <span className="daily-summary-label"><Wind size={17} aria-hidden="true"/>Pyły w powietrzu<ArrowDownRight size={15} aria-hidden="true"/></span>
+    {a ? <>
+     <strong className={`daily-summary-air ${!staleAir && a.label ? "aq-" + a.index : ""}`}>{staleAir ? "Nieaktualny indeks" : a.label || "Brak indeksu"}</strong>
+     <small>PM2,5 · {number(a.pm25?.value, 1)} µg/m³</small>
+     <small>PM10 · {number(a.pm10?.value, 1)} µg/m³</small>
+    </> : <strong>{air.loading ? "Wczytywanie…" : "Brak pomiarów"}</strong>}
+   </a>
    <a className="daily-summary-item" href="#weather-details">
     <span className="daily-summary-label"><CloudSun size={17} aria-hidden="true"/>Pogoda<ArrowDownRight size={15} aria-hidden="true"/></span>
     {w ? <>
@@ -57,6 +65,9 @@ export default function Dashboard() {
      <span>{condition(w.current.weather_code)}</span>
      <small>Odczuwalna {number(w.current.apparent_temperature)}°C{weatherOld ? " · starsze dane" : ""}</small>
     </> : <strong>{weather.loading ? "Wczytywanie…" : "Brak danych"}</strong>}
+   </a>
+   <a className="daily-summary-item" href="#pollen-title">
+    <span className="daily-summary-label"><Flower2 size={17} aria-hidden="true"/>Pylenie roślin<ArrowDownRight size={15} aria-hidden="true"/></span>
    </a>
    <a className="daily-summary-item" href="#waste-details">
     <span className="daily-summary-label"><Trash2 size={17} aria-hidden="true"/>Wywóz odpadów<ArrowDownRight size={15} aria-hidden="true"/></span>
@@ -66,14 +77,6 @@ export default function Dashboard() {
      <small>{nextWaste.fractions.map(f => fractions[f]).join(" · ")}</small>
     </> : <strong>{wasteValid ? "Brak odbioru w ciągu 5 dni" : waste.schedule || waste.error ? "Brak aktualnego harmonogramu" : "Wczytywanie…"}</strong>}
     {waste.error && wasteValid ? <small>Ostatnio wczytany harmonogram</small> : null}
-   </a>
-   <a className="daily-summary-item" href="#air-measurements">
-    <span className="daily-summary-label"><Wind size={17} aria-hidden="true"/>Pyły w powietrzu<ArrowDownRight size={15} aria-hidden="true"/></span>
-    {a ? <>
-     <strong className={`daily-summary-air ${!staleAir && a.label ? "aq-" + a.index : ""}`}>{staleAir ? "Nieaktualny indeks" : a.label || "Brak indeksu"}</strong>
-     <small>PM2,5 · {number(a.pm25?.value, 1)} µg/m³</small>
-     <small>PM10 · {number(a.pm10?.value, 1)} µg/m³</small>
-    </> : <strong>{air.loading ? "Wczytywanie…" : "Brak pomiarów"}</strong>}
    </a>
   </div>
  </section>
