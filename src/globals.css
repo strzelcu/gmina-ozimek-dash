@@ -327,8 +327,17 @@ footer p { margin-top: var(--dashboard-space-sm); }
   .daily-summary-label { margin-bottom: 1px; }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 #air-measurements {
   scroll-margin-top: 1rem;
+}
+#air-measurements:focus {
+  outline: none;
 }
 
 .back-to-top {
