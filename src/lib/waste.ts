@@ -23,8 +23,11 @@ export function upcomingCollections(schedule: WasteSchedule, today: string) {
     : [];
 }
 export function collectionsWithinWeek(schedule: WasteSchedule, today: string) {
+  return collectionsWithinDays(schedule, today, 7);
+}
+export function collectionsWithinDays(schedule: WasteSchedule, today: string, days: number) {
   const end = new Date(today + "T12:00:00Z");
-  end.setUTCDate(end.getUTCDate() + 7);
+  end.setUTCDate(end.getUTCDate() + days);
   const lastDay = end.toISOString().slice(0, 10);
   return upcomingCollections(schedule, today).filter(entry => entry.date <= lastDay);
 }

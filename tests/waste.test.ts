@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { collectionsWithinWeek, isWasteSchedule, polishDay, relativeDay, upcomingCollections } from "../src/lib/waste.ts";
+import { collectionsWithinDays, collectionsWithinWeek, isWasteSchedule, polishDay, relativeDay, upcomingCollections } from "../src/lib/waste.ts";
 const schedule = JSON.parse(readFileSync(new URL("../public/data/waste.json", import.meta.url), "utf8"));
 test("verified schedule: valid dates, no duplicate entries, Szczedrzyk bulky pickup", () => {
   assert.ok(isWasteSchedule(schedule));
@@ -55,4 +55,14 @@ test("weekly reminders handle empty weeks, expired schedules, and year boundarie
   ]};
   assert.deepEqual(collectionsWithinWeek(yearEnd, "2026-12-28"),
     [{date: "2027-01-04", fractions: ["bio"]}]);
+});
+
+test("dashboard reminders include today and day five, excluding day six", () => {
+  const window = {...schedule, collections: [
+    {date: "2026-10-22", fractions: ["glass"]},
+    {date: "2026-10-27", fractions: ["mixed"]},
+    {date: "2026-10-28", fractions: ["paper"]},
+  ]};
+  assert.deepEqual(collectionsWithinDays(window, "2026-10-22", 5).map(e => e.date),
+    ["2026-10-22", "2026-10-27"]);
 });
