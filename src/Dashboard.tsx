@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cachedData, refreshData } from "./lib/browser-data";
 import AirForecast from "./components/AirForecast";
 import WaterSection from "./components/WaterSection";
-import EnvironmentExtras from "./components/EnvironmentExtras";
+import EnvironmentExtras, { pollenPlants, usePollenForecast } from "./components/EnvironmentExtras";
 import WasteSection, { formatWasteDate, useWasteSchedule } from "./components/WasteSection";
 import { collectionsWithinDays, fractions, relativeDay } from "./lib/waste";
 type Result = { data: any; loading: boolean; error: boolean };
@@ -22,6 +22,14 @@ export default function Dashboard() {
  const refreshing=useRef(false);
  const [checked,setChecked]=useState<string|null>(null),[today,setToday]=useState("");
  const waste = useWasteSchedule(checked);
+ const pollenForecast = usePollenForecast(checked);
+ const pollenValues = pollenForecast.pollen?.values ?? [];
+ const positivePollen = pollenPlants
+  .flatMap(([, plant], i) => {
+   const value = pollenValues[i];
+   return typeof value === "number" && value > 0 ? [{ plant, value }] : [];
+  })
+  .sort((a, b) => b.value - a.value);
  const summaryRef = useRef<HTMLElement>(null);
  const [showBackToTop, setShowBackToTop] = useState(false);
  useEffect(() => {
@@ -68,6 +76,16 @@ export default function Dashboard() {
    </a>
    <a className="daily-summary-item" href="#pollen-title">
     <span className="daily-summary-label"><Flower2 size={17} aria-hidden="true"/>Pylenie roślin<ArrowDownRight size={15} aria-hidden="true"/></span>
+    {positivePollen.length ? <>
+     <strong>{positivePollen.slice(0, 2).map(({ plant, value }) =>
+      `${plant} ${value < 0.1 ? "<0,1" : number(value, 1)}`
+     ).join(" · ")}</strong>
+     <small>ziaren/m³{positivePollen.length > 2 ? ` · +${positivePollen.length - 2} inne` : ""}</small>
+    </> : <strong>{pollenValues.length === pollenPlants.length && pollenValues.every(value => value === 0)
+     ? "Prognoza: 0 ziaren/m³"
+     : pollenValues.includes(0) ? "0 w dostępnych danych"
+     : pollenForecast.loading ? "Wczytywanie…" : "Brak danych"}</strong>}
+    {pollenForecast.error && pollenValues.some(value => value !== null) ? <small>Wcześniejsza prognoza</small> : null}
    </a>
    <a className="daily-summary-item" href="#waste-details">
     <span className="daily-summary-label"><Trash2 size={17} aria-hidden="true"/>Wywóz odpadów<ArrowDownRight size={15} aria-hidden="true"/></span>
@@ -94,7 +112,7 @@ export default function Dashboard() {
  <section className="card forecast-card" aria-labelledby="forecast-title"><div className="card-head"><h3 className="card-title" id="forecast-title"><Thermometer size={20}/>Prognoza na 5 dni</h3><span className="pill neutral">{weatherOld?"STARSZE DANE":"PROGNOZA"}</span></div>{w?<div className="forecast-days">{w.daily.time.map((time:string,i:number)=>({time,i})).filter(({time}:any)=>time>=forecastToday).slice(0,5).map(({time,i}:{time:string;i:number})=><div className="forecast-day" key={time}><div><strong>{time===forecastToday?"Dzisiaj":new Intl.DateTimeFormat("pl-PL",{weekday:"long",timeZone:"Europe/Warsaw"}).format(new Date(time+"T12:00:00Z"))}</strong><span>{time.slice(8,10)}.{time.slice(5,7)}</span></div><WeatherIcon code={w.daily.weather_code[i]}/><div className="forecast-temp"><strong>{number(w.daily.temperature_2m_max[i])}°</strong><span>{number(w.daily.temperature_2m_min[i])}°</span></div><div className="forecast-rain"><Droplets size={13}/>{number(w.daily.precipitation_probability_max[i])}%</div></div>)}</div>:<div className="loading-block">{weather.loading?<Skeleton className="h-36 w-full"/>:<p>Prognoza chwilowo niedostępna</p>}</div>}<div className="card-foot"><span>Temperatura maks. / min. · szansa opadu</span></div></section></div>
 
  </section>
- <EnvironmentExtras weather={weather} refreshToken={checked}/>
+ <EnvironmentExtras weather={weather} forecast={pollenForecast}/>
  <WaterSection result={water}/>
  <WasteSection {...waste}/>
  <footer><div><p>Dane pogodowe i pomiarowe pobiera Twoja przeglądarka przy otwarciu strony, co godzinę i po kliknięciu „Odśwież dane”. Ostatnie odczyty zachowuje lokalnie na tym urządzeniu. Czas wyświetlany dla Polski.</p></div><div className="footer-sources"><Source href="https://open-meteo.com/">Open-Meteo</Source><Source href="https://panel.syngeos.pl/sensor/pm10?device=10417">Syngeos</Source><Source href="https://danepubliczne.imgw.pl/">IMGW-PIB</Source></div><p className="attribution">Kod strony jest publicznie dostępny na portalu GitHub. <Source href="https://github.com/strzelcu/szczedrzyk">Zobacz repozytorium</Source></p><p className="attribution">Propozycje zmian można zgłaszać w <Source href="https://github.com/strzelcu/szczedrzyk/issues">GitHub Issues repozytorium</Source>.</p><p className="attribution">Dane Instytutu Meteorologii i Gospodarki Wodnej – Państwowego Instytutu Badawczego zostały przetworzone. Dane operacyjne mogą podlegać korektom.</p><p className="attribution">Strona została wygenerowana przez AI.</p></footer>
