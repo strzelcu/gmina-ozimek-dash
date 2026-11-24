@@ -1,0 +1,29 @@
+# Minimalny przykład struktury. Zweryfikowane pomiary i terminy są w test/localities/szczedrzyk.yaml.
+schemaVersion: 1
+slug: szczedrzyk
+name: Szczedrzyk
+kind: village
+simc: "0501216"
+municipality: Gmina Ozimek
+region: Opolskie
+position:
+  latitude: 50.704167
+  longitude: 18.152222
+  sourceUrl: https://prng.geoportal.gov.pl/
+warnings:
+  countyTeryt: "1609"
+  countyName: Powiat opolski
+  voivodeship: opolskie
+  catchments:
+    - name: Mała Panew
+      aliases: [Mała Panew, Małej Panwi]
+air:
+  radiusKm: 10
+  sourceUrls: [https://ozimek.pl/]
+  sensors: []
+water:
+  sourceUrl: https://dane.gov.pl/pl/dataset/2167%2Cmapa-podzialu-hydrograficznego
+  rivers: []
+waste:
+  sourceUrl: https://ozimek.pl/229-ochrona-srodowiska/32282-harmonogram-wywozu-odpadow.html
+  schedules: []

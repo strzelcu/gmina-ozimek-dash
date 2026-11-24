@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Konfiguracja dashboardu miejscowości",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "slug", "name", "kind", "simc", "municipality", "region", "position", "warnings", "air", "water", "waste"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "name": { "$ref": "#/definitions/label" },
+    "kind": { "enum": ["city", "village"] },
+    "simc": { "type": "string", "pattern": "^[0-9]{7}$" },
+    "municipality": { "$ref": "#/definitions/label" },
+    "region": { "$ref": "#/definitions/label" },
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["latitude", "longitude", "sourceUrl"],
+      "properties": {
+        "latitude": { "$ref": "#/definitions/latitude" },
+        "longitude": { "$ref": "#/definitions/longitude" },
+        "sourceUrl": { "$ref": "#/definitions/url" }
+      }
+    },
+    "warnings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["countyTeryt", "countyName", "voivodeship", "catchments"],
+      "properties": {
+        "countyTeryt": { "type": "string", "pattern": "^[0-9]{4}$" },
+        "countyName": { "$ref": "#/definitions/label" },
+        "voivodeship": { "$ref": "#/definitions/label" },
+        "catchments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "aliases"],
+            "properties": {
+              "name": { "$ref": "#/definitions/label" },
+              "aliases": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/label" } }
+            }
+          }
+        }
+      }
+    },
+    "air": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["radiusKm", "sourceUrls", "sensors"],
+      "properties": {
+        "radiusKm": { "type": "number", "exclusiveMinimum": 0 },
+        "sourceUrls": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/url" } },
+        "sensors": { "type": "array", "items": { "$ref": "#/definitions/sensor" } }
+      }
+    },
+    "water": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceUrl", "rivers"],
+      "properties": {
+        "sourceUrl": { "$ref": "#/definitions/url" },
+        "rivers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "distanceKm", "gauges"],
+            "properties": {
+              "name": { "$ref": "#/definitions/label" },
+              "distanceKm": { "type": "number", "minimum": 0 },
+              "gauges": { "type": "array", "items": { "$ref": "#/definitions/gauge" } }
+            }
+          }
+        }
+      }
+    },
+    "waste": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceUrl", "schedules"],
+      "properties": {
+        "sourceUrl": { "$ref": "#/definitions/url" },
+        "schedules": { "type": "array", "items": { "$ref": "#/definitions/schedule" } }
+      }
+    }
+  },
+  "definitions": {
+    "label": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "date": { "type": "string", "format": "date" },
+    "url": { "type": "string", "format": "https-url" },
+    "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+    "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+    "sensor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "id", "locality", "address", "latitude", "longitude", "sourceUrl"],
+      "properties": {
+        "provider": { "const": "syngeos" },
+        "id": { "type": "string", "pattern": "^[0-9]+$" },
+        "locality": { "$ref": "#/definitions/label" },
+        "address": { "$ref": "#/definitions/label" },
+        "latitude": { "$ref": "#/definitions/latitude" },
+        "longitude": { "$ref": "#/definitions/longitude" },
+        "sourceUrl": { "$ref": "#/definitions/url" }
+      }
+    },
+    "gauge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "latitude", "longitude"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[0-9]{9}$" },
+        "name": { "$ref": "#/definitions/label" },
+        "latitude": { "$ref": "#/definitions/latitude" },
+        "longitude": { "$ref": "#/definitions/longitude" },
+        "note": { "$ref": "#/definitions/label" }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["region", "coverage", "housing", "validFrom", "validUntil", "verifiedAt", "sourceUrl", "collections"],
+      "properties": {
+        "region": { "$ref": "#/definitions/label" },
+        "coverage": { "$ref": "#/definitions/label" },
+        "housing": { "const": "single-family" },
+        "validFrom": { "$ref": "#/definitions/date" },
+        "validUntil": { "$ref": "#/definitions/date" },
+        "verifiedAt": { "$ref": "#/definitions/date" },
+        "sourceUrl": { "$ref": "#/definitions/url" },
+        "collections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["date", "fractions"],
+            "properties": {
+              "date": { "$ref": "#/definitions/date" },
+              "fractions": {
+                "type": "array", "minItems": 1, "uniqueItems": true,
+                "items": { "enum": ["mixed", "packaging", "paper", "glass", "bio", "bulky"] }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
