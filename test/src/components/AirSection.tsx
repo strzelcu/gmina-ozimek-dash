@@ -31,7 +31,7 @@ function AirStation({ sensor, reading, failed, loading }: {
     <div className="air-station-heading">
       <h3 id={`sensor-${sensor.id}`}>{sensor.locality}<span>{sensor.address}</span></h3>
       <span className={`pill ${sensor.local ? "good" : "neutral"}`}>
-        {sensor.local ? "W miejscowości" : "Czujnik zastępczy"}
+        {sensor.local ? "W miejscowości" : "Spoza miejscowości"}
       </span>
     </div>
     <p className="section-meta">{distanceLabel(sensor.distanceKm)} od punktu miejscowości</p>

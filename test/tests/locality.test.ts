@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { checkLocality, readLocalities } from "../scripts/localities.mjs";
-import { loadSource } from "../scripts/lib/sources.ts";
+import { loadSource, type WaterReading } from "../scripts/lib/sources.ts";
 import { normalizeWarnings } from "../scripts/lib/local-warnings.ts";
 import { weatherUrl } from "../scripts/lib/weather-data.ts";
 import { rankedSensors } from "../src/lib/locality.ts";
 import { formatTemperature } from "../src/lib/temperature.ts";
+import { riversWithWaterLevels } from "../src/lib/water.ts";
 import { currentSchedules, wasteScheduleWeeks, type WasteSchedule } from "../src/lib/waste.ts";
 
 const localities = readLocalities();
@@ -83,6 +84,22 @@ test("only relevant water gauge IDs and waterways are used", async () => {
   ]);
   assert.deepEqual(data.stations.map(row => row.id), ["150180050"]);
   assert.equal(data.stations[0].time, "2025-12-01T07:30:00.000Z");
+});
+
+test("the water card includes only configured gauges with a dated level", () => {
+  const rivers = locality("szczedrzyk").water.rivers;
+  const valid: WaterReading = { id: "150180050", name: "Ozimek", river: "Mała Panew", level: 0,
+    time: "2026-11-24T21:00:00Z", warning: 210, alarm: 250, flow: null, flowTime: null,
+  };
+  const incomplete = [
+    { ...valid, id: "150180020", name: "Turawa", level: null },
+    { ...valid, id: "150180100", name: "Staniszcze Wielkie", time: "invalid" },
+    { ...valid, id: "150180190", name: "Krupski Młyn", level: 22 },
+  ];
+  const measured = riversWithWaterLevels(rivers, [...incomplete, valid]);
+  assert.deepEqual(measured.map(({ river, gauges }) => [river.name, gauges.map(({ gauge, reading }) => [gauge.id, reading.level])]),
+    [["Mała Panew", [["150180050", 0]]]]);
+  assert.deepEqual(riversWithWaterLevels(rivers, incomplete), []);
 });
 
 test("hydrological warning areas come from the locality configuration", () => {
