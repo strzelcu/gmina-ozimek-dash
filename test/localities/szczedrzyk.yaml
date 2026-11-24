@@ -1,0 +1,264 @@
+schemaVersion: 1
+slug: szczedrzyk
+name: Szczedrzyk
+kind: village
+simc: '0501216'
+municipality: Gmina Ozimek
+region: Opolskie
+position:
+  latitude: 50.704085
+  longitude: 18.152337
+  sourceUrl: https://mapy.geoportal.gov.pl/wss/service/PZGiK/PRNG/WFS/GeographicalNames?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&RESOURCEID=M1_UrzedoweNazwyMiejscowosci.134646
+warnings:
+  countyTeryt: '1609'
+  countyName: Powiat opolski
+  voivodeship: opolskie
+  catchments:
+    - name: Mała Panew
+      aliases: [Mała Panew, Małej Panwi]
+air:
+  radiusKm: 10
+  sourceUrls: ['https://ozimek.pl/#:~:text=Jako%C5%9B%C4%87%20powietrza%20w%20Gminie%20Ozimek', 'https://panel.syngeos.pl/']
+  sensors:
+    - provider: syngeos
+      id: '10417'
+      locality: Szczedrzyk
+      address: Opolska 1
+      latitude: 50.70479
+      longitude: 18.152054
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=10417
+    - provider: syngeos
+      id: '8229'
+      locality: Antoniów
+      address: Powstańców Śląskich 17
+      latitude: 50.68661
+      longitude: 18.20347
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8229
+    - provider: syngeos
+      id: '8227'
+      locality: Dylaki
+      address: Szkolna 5
+      latitude: 50.73853
+      longitude: 18.19037
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8227
+    - provider: syngeos
+      id: '8228'
+      locality: Ozimek
+      address: ks. Jana Dzierżona 4B
+      latitude: 50.68023
+      longitude: 18.20991
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8228
+    - provider: syngeos
+      id: '8230'
+      locality: Ozimek
+      address: Daniecka 12A
+      latitude: 50.66864
+      longitude: 18.19926
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8230
+    - provider: syngeos
+      id: '10318'
+      locality: Ozimek
+      address: Janusza Korczaka 12
+      latitude: 50.67821
+      longitude: 18.22168
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=10318
+    - provider: syngeos
+      id: '7357'
+      locality: Chrząstowice
+      address: Dworcowa 1
+      latitude: 50.663982
+      longitude: 18.07022
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=7357
+    - provider: syngeos
+      id: '10335'
+      locality: Krasiejów
+      address: Szkolna 5
+      latitude: 50.66705
+      longitude: 18.24255
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=10335
+    - provider: syngeos
+      id: '1530'
+      locality: Krasiejów
+      address: Spóracka 19
+      latitude: 50.67048
+      longitude: 18.24907
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=1530
+    - provider: syngeos
+      id: '7821'
+      locality: Grodziec
+      address: Tartaczna 1
+      latitude: 50.70567
+      longitude: 18.27927
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=7821
+water:
+  sourceUrl: https://dane.gov.pl/pl/dataset/2167%2Cmapa-podzialu-hydrograficznego
+  rivers:
+    - name: Mała Panew
+      distanceKm: 1.468
+      gauges:
+        - id: '150180050'
+          name: Ozimek
+          latitude: 50.6792
+          longitude: 18.2039
+          note: Odcinek Małej Panwi w Ozimku, powyżej Jeziora Turawskiego
+        - id: '150180020'
+          name: Turawa
+          latitude: 50.7397
+          longitude: 18.0767
+          note: Mała Panew poniżej zapory Jeziora Turawskiego
+        - id: '150180100'
+          name: Staniszcze Wielkie
+          latitude: 50.6633
+          longitude: 18.3425
+          note: Odcinek Małej Panwi w górę rzeki od gminy Ozimek
+    - name: Libawa
+      distanceKm: 1.557
+      gauges: []
+    - name: Rosa
+      distanceKm: 2.455
+      gauges: []
+waste:
+  sourceUrl: https://ozimek.pl/229-ochrona-srodowiska/32282-harmonogram-wywozu-odpadow.html
+  schedules:
+    - region: '7'
+      coverage: Szczedrzyk
+      housing: single-family
+      validFrom: '2026-01-01'
+      validUntil: '2026-12-31'
+      verifiedAt: '2026-11-24'
+      sourceUrl: https://ozimek.pl/static/img/k01/DRO%20KH%20odpady/harmonogram%202026/rejon%207%20SZCZEDRZYK%2C%20JEDLICE.pdf
+      collections:
+        - date: '2026-01-07'
+          fractions: [mixed]
+        - date: '2026-01-15'
+          fractions: [glass]
+        - date: '2026-01-16'
+          fractions: [bio]
+        - date: '2026-01-20'
+          fractions: [mixed]
+        - date: '2026-01-29'
+          fractions: [packaging, paper]
+        - date: '2026-02-03'
+          fractions: [mixed]
+        - date: '2026-02-13'
+          fractions: [bio]
+        - date: '2026-02-17'
+          fractions: [mixed]
+        - date: '2026-02-26'
+          fractions: [packaging]
+        - date: '2026-03-03'
+          fractions: [mixed]
+        - date: '2026-03-12'
+          fractions: [glass]
+        - date: '2026-03-13'
+          fractions: [bio]
+        - date: '2026-03-17'
+          fractions: [mixed]
+        - date: '2026-03-26'
+          fractions: [packaging, paper]
+        - date: '2026-03-31'
+          fractions: [mixed]
+        - date: '2026-04-11'
+          fractions: [bio]
+        - date: '2026-04-14'
+          fractions: [mixed]
+        - date: '2026-04-23'
+          fractions: [packaging]
+        - date: '2026-04-24'
+          fractions: [bio]
+        - date: '2026-04-28'
+          fractions: [mixed]
+        - date: '2026-05-08'
+          fractions: [glass]
+        - date: '2026-05-09'
+          fractions: [bio]
+        - date: '2026-05-12'
+          fractions: [mixed]
+        - date: '2026-05-15'
+          fractions: [bulky]
+        - date: '2026-05-21'
+          fractions: [packaging, paper]
+        - date: '2026-05-22'
+          fractions: [bio]
+        - date: '2026-05-26'
+          fractions: [mixed]
+        - date: '2026-06-06'
+          fractions: [bio]
+        - date: '2026-06-09'
+          fractions: [mixed]
+        - date: '2026-06-18'
+          fractions: [packaging]
+        - date: '2026-06-19'
+          fractions: [bio]
+        - date: '2026-06-23'
+          fractions: [mixed]
+        - date: '2026-07-02'
+          fractions: [glass]
+        - date: '2026-07-03'
+          fractions: [bio]
+        - date: '2026-07-07'
+          fractions: [mixed]
+        - date: '2026-07-16'
+          fractions: [packaging, paper]
+        - date: '2026-07-17'
+          fractions: [bio]
+        - date: '2026-07-21'
+          fractions: [mixed]
+        - date: '2026-07-31'
+          fractions: [bio]
+        - date: '2026-08-04'
+          fractions: [mixed]
+        - date: '2026-08-13'
+          fractions: [packaging]
+        - date: '2026-08-14'
+          fractions: [bio]
+        - date: '2026-08-18'
+          fractions: [mixed]
+        - date: '2026-08-27'
+          fractions: [glass]
+        - date: '2026-08-28'
+          fractions: [bio]
+        - date: '2026-09-01'
+          fractions: [mixed]
+        - date: '2026-09-10'
+          fractions: [packaging, paper]
+        - date: '2026-09-11'
+          fractions: [bio]
+        - date: '2026-09-15'
+          fractions: [mixed]
+        - date: '2026-09-25'
+          fractions: [bio]
+        - date: '2026-09-29'
+          fractions: [mixed]
+        - date: '2026-10-08'
+          fractions: [packaging]
+        - date: '2026-10-09'
+          fractions: [bio]
+        - date: '2026-10-13'
+          fractions: [mixed]
+        - date: '2026-10-22'
+          fractions: [glass]
+        - date: '2026-10-23'
+          fractions: [bio]
+        - date: '2026-10-27'
+          fractions: [mixed]
+        - date: '2026-11-05'
+          fractions: [packaging, paper]
+        - date: '2026-11-06'
+          fractions: [bio]
+        - date: '2026-11-10'
+          fractions: [mixed]
+        - date: '2026-11-24'
+          fractions: [mixed]
+        - date: '2026-12-03'
+          fractions: [packaging]
+        - date: '2026-12-04'
+          fractions: [bio]
+        - date: '2026-12-08'
+          fractions: [mixed]
+        - date: '2026-12-17'
+          fractions: [glass]
+        - date: '2026-12-21'
+          fractions: [mixed]
+        - date: '2026-12-31'
+          fractions: [packaging, paper]

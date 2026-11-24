@@ -7,9 +7,9 @@ simc: "0501216"
 municipality: Gmina Ozimek
 region: Opolskie
 position:
-  latitude: 50.704167
-  longitude: 18.152222
-  sourceUrl: https://prng.geoportal.gov.pl/
+  latitude: 50.704085
+  longitude: 18.152337
+  sourceUrl: https://mapy.geoportal.gov.pl/wss/service/PZGiK/PRNG/WFS/GeographicalNames?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&RESOURCEID=M1_UrzedoweNazwyMiejscowosci.134646
 warnings:
   countyTeryt: "1609"
   countyName: Powiat opolski
