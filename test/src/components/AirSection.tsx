@@ -27,13 +27,16 @@ function AirStation({ sensor, reading, failed, loading }: {
   loading: boolean;
 }) {
   const status = reading && airStatus(reading, failed);
-  return <article className="air-station" aria-labelledby={`sensor-${sensor.id}`}>
+  const localityId = `sensor-${sensor.id}`;
+  const addressId = `sensor-address-${sensor.id}`;
+  return <article className="air-station" aria-labelledby={`${localityId} ${addressId}`}>
     <div className="air-station-heading">
-      <h3 id={`sensor-${sensor.id}`}>{sensor.locality}<span>{sensor.address}</span></h3>
+      <h3 id={localityId}>{sensor.locality}</h3>
       <span className={`pill ${sensor.local ? "good" : "neutral"}`}>
         {sensor.local ? "W miejscowości" : "Spoza miejscowości"}
       </span>
     </div>
+    <p id={addressId} className="air-station-address">{sensor.address}</p>
     <p className="section-meta">{distanceLabel(sensor.distanceKm)} od punktu miejscowości</p>
     {status && reading ? <>
       <div className={`air-status ${status.style}`}><strong>{status.label}</strong></div>
