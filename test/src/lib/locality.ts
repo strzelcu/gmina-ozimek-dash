@@ -26,7 +26,7 @@ export type Locality = {
   region: string;
   position: Position & { sourceUrl: string };
   warnings: WarningScope;
-  air: { radiusKm: number; sourceUrls: string[]; sensors: AirSensor[] };
+  air: { sourceUrls: string[]; sensors: AirSensor[] };
   water: { sourceUrl: string; rivers: Watercourse[] };
   waste: { sourceUrl: string; schedules: WasteSchedule[] };
 };
@@ -55,5 +55,5 @@ export function rankedSensors(locality: Locality) {
     ...sensor,
     distanceKm: distanceKm(locality.position, sensor),
     local: sensorLocality(sensor.locality) === sensorLocality(locality.name),
-  })).sort((a, b) => Number(b.local) - Number(a.local) || a.distanceKm - b.distanceKm || a.id.localeCompare(b.id));
+  })).sort((a, b) => a.distanceKm - b.distanceKm || a.id.localeCompare(b.id));
 }

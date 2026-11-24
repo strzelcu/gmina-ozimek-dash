@@ -47,9 +47,8 @@
     "air": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["radiusKm", "sourceUrls", "sensors"],
+      "required": ["sourceUrls", "sensors"],
       "properties": {
-        "radiusKm": { "type": "number", "exclusiveMinimum": 0 },
         "sourceUrls": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/url" } },
         "sensors": { "type": "array", "items": { "$ref": "#/definitions/sensor" } }
       }

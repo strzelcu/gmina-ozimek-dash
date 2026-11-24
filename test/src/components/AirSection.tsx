@@ -20,19 +20,18 @@ export function airStatus(reading: AirReading, failed = false) {
   };
 }
 
-function AirStation({ sensor, reading, failed, loading, radius }: {
+function AirStation({ sensor, reading, failed, loading }: {
   sensor: RankedSensor;
   reading?: AirReading;
   failed: boolean;
   loading: boolean;
-  radius: number;
 }) {
   const status = reading && airStatus(reading, failed);
   return <article className="air-station" aria-labelledby={`sensor-${sensor.id}`}>
     <div className="air-station-heading">
       <h3 id={`sensor-${sensor.id}`}>{sensor.locality}<span>{sensor.address}</span></h3>
       <span className={`pill ${sensor.local ? "good" : "neutral"}`}>
-        {sensor.local ? "W miejscowości" : sensor.distanceKm > radius ? "Poza promieniem" : "W pobliżu"}
+        {sensor.local ? "W miejscowości" : "Czujnik zastępczy"}
       </span>
     </div>
     <p className="section-meta">{distanceLabel(sensor.distanceKm)} od punktu miejscowości</p>
@@ -67,20 +66,20 @@ function AirScale({ reading }: { reading: AirReading }) {
   </details>;
 }
 
-export default function AirSection({ sensors, result, radius, refreshToken }: {
-  sensors: RankedSensor[]; result: Result<"air">; radius: number; refreshToken: number;
+export default function AirSection({ sensors, result, refreshToken }: {
+  sensors: RankedSensor[]; result: Result<"air">; refreshToken: number;
 }) {
   const [selectedId, setSelectedId] = useState(sensors[0]?.id);
   const selected = sensors.find(sensor => sensor.id === selectedId);
   const selectedReading = selected && result.data?.stations[selected.id];
   return <section id="air-measurements" className="card air-card" aria-labelledby="air-title">
     <div className="section-heading"><h2 id="air-title"><Wind size={20} aria-hidden="true" />Jakość powietrza</h2></div>
-    <p className="section-context">Czujniki w miejscowości i w promieniu {radius} km. Pomiary pyłów są orientacyjne.</p>
+    <p className="section-context">{sensors[0]?.local === false && "Pomiary z najbliższej miejscowości z czujnikiem. "}Pomiary pyłów są orientacyjne.</p>
     {!sensors.length && <p className="section-message">Brak zweryfikowanych czujników w danych dla tej miejscowości.</p>}
     {result.error && <p className="error-note" role="status">Nie udało się odświeżyć pomiarów powietrza.</p>}
     <div className="air-stations">{sensors.map(sensor => <AirStation key={sensor.id} sensor={sensor}
       reading={result.data?.stations[sensor.id]} failed={result.error || Boolean(result.data?.failed.includes(sensor.id))}
-      loading={result.loading} radius={radius} />)}</div>
+      loading={result.loading} />)}</div>
     {selected && <>
       {sensors.length > 1 && <label className="sensor-picker">Czujnik dla historii pomiarów
         <select value={selected.id} onChange={event => setSelectedId(event.target.value)}>
