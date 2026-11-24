@@ -1,0 +1,17 @@
+{
+  "name": "ozimek-dashboard-test",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build.mjs",
+    "preview": "vite preview",
+    "check": "node scripts/check-config.mjs && node --test tests/*.test.ts",
+    "data": "node scripts/fetch-data.mjs"
+  },
+  "devDependencies": {
+    "ajv": "8.17.1",
+    "yaml": "2.8.4"
+  }
+}
