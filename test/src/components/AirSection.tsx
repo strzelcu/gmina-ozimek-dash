@@ -74,7 +74,7 @@ export default function AirSection({ sensors, result, refreshToken }: {
   const selectedReading = selected && result.data?.stations[selected.id];
   return <section id="air-measurements" className="card air-card" aria-labelledby="air-title">
     <div className="section-heading"><h2 id="air-title"><Wind size={20} aria-hidden="true" />Jakość powietrza</h2></div>
-    <p className="section-context">{sensors[0]?.local === false && "Pomiary z najbliższej miejscowości z czujnikiem. "}Pomiary pyłów są orientacyjne.</p>
+    <p className="section-context">{sensors[0]?.local === false && "Najbliższe czujniki spoza miejscowości. "}Pomiary pyłów są orientacyjne.</p>
     {!sensors.length && <p className="section-message">Brak zweryfikowanych czujników w danych dla tej miejscowości.</p>}
     {result.error && <p className="error-note" role="status">Nie udało się odświeżyć pomiarów powietrza.</p>}
     <div className="air-stations">{sensors.map(sensor => <AirStation key={sensor.id} sensor={sensor}

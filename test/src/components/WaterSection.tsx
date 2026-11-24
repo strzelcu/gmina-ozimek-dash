@@ -85,19 +85,20 @@ export default function WaterSection({ locality, result }: { locality: Locality;
   }, [history, historyKey]);
 
   const readings = new Map(data?.stations.map(row => [row.id, row]));
+  const rivers = locality.water.rivers.filter(river => river.gauges.length > 0).sort((a, b) => a.distanceKm - b.distanceKm);
   return <section className="card water-section" aria-labelledby="water-title">
     <div className="water-heading"><div><h2 id="water-title"><Waves size={21} aria-hidden="true" />Wody w okolicy</h2>
-      <p>Najbliższe nazwane cieki i wodowskazy w zlewni</p></div>
+      <p>Wodowskazy IMGW w okolicy</p></div>
       <a className="source-link" href="https://hydro.imgw.pl/" target="_blank" rel="noreferrer">Mapa IMGW<ExternalLink size={12} aria-hidden="true" /></a>
     </div>
     {result.error && <p className="error-note" role="status">Nie udało się odświeżyć danych IMGW.{data && " Widoczne są ostatnio pobrane odczyty."}</p>}
-    {!locality.water.rivers.length && <p className="section-message">Brak zweryfikowanych cieków w danych dla tej miejscowości.</p>}
-    {[...locality.water.rivers].sort((a, b) => a.distanceKm - b.distanceKm).map(river => <div className="watercourse" key={river.name}>
+    {!rivers.length && <p className="section-message">Brak przypisanych wodowskazów IMGW.</p>}
+    {rivers.map(river => <div className="watercourse" key={river.name}>
       <h3>{river.name}<span>{distanceLabel(river.distanceKm)} do osi cieku</span></h3>
-      {river.gauges.length ? <div className="water-grid">{river.gauges.map(gauge => result.loading && !data
+      <div className="water-grid">{river.gauges.map(gauge => result.loading && !data
         ? <p className="section-meta" key={gauge.id}>Pobieranie pomiarów · {gauge.name}</p>
         : <GaugeCard key={gauge.id} gauge={gauge} row={readings.get(gauge.id)} history={history} distance={distanceKm(locality.position, gauge)} />
-      )}</div> : <p className="section-message">Brak przypisanego wodowskazu IMGW.</p>}
+      )}</div>
     </div>)}
     <p className="section-meta">Trend porównuje odczyty zapisane na urządzeniu w odstępie 23–25 godzin.</p>
     <p className="section-meta"><a className="source-link" href={locality.water.sourceUrl} target="_blank" rel="noreferrer">Mapa hydrograficzna</a> · <a className="source-link" href={hydroUrl} target="_blank" rel="noreferrer">Dane IMGW</a></p>

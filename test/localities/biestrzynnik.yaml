@@ -26,6 +26,20 @@ air:
       latitude: 50.73853
       longitude: 18.19037
       sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8227
+    - provider: syngeos
+      id: '10417'
+      locality: Szczedrzyk
+      address: Opolska 1
+      latitude: 50.70479
+      longitude: 18.152054
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=10417
+    - provider: syngeos
+      id: '8229'
+      locality: Antoniów
+      address: Powstańców Śląskich 17
+      latitude: 50.68661
+      longitude: 18.20347
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8229
 water:
   sourceUrl: https://dane.gov.pl/pl/dataset/2167%2Cmapa-podzialu-hydrograficznego
   rivers:
