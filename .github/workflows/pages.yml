@@ -44,6 +44,16 @@ jobs:
         run: npm run build
         env:
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+      - name: Build locality dashboards under /test
+        run: |
+          npm ci --prefix test
+          npm run check --prefix test
+          npm run data --prefix test
+          npm run build --prefix test
+          mkdir -p dist/test
+          cp -a test/dist/. dist/test/
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
