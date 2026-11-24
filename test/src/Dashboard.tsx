@@ -8,6 +8,7 @@ import Header from "./Header";
 import WarningsSection from "./components/WarningsSection";
 import WaterSection from "./components/WaterSection";
 import EnvironmentExtras, { pollenPlants, usePollenForecast } from "./components/EnvironmentExtras";
+import FeedbackContact from "./components/FeedbackContact";
 import WasteSection, { formatWasteDate, useWasteDay } from "./components/WasteSection";
 import { fractions, relativeDay, wasteScheduleWeeks } from "./lib/waste";
 import { distanceLabel, rankedSensors, type Locality } from "./lib/locality";
@@ -159,7 +160,9 @@ export default function Dashboard({ locality }: { locality: Locality }) {
  <EnvironmentExtras weather={weather} forecast={pollenForecast}/>
  <WaterSection locality={locality} result={water}/>
  <WasteSection waste={locality.waste} today={today} weeks={wasteWeeks}/>
- <footer><div><p>Dane pogodowe i pomiarowe pobiera Twoja przeglądarka przy otwarciu strony, co godzinę i po kliknięciu „Odśwież dane”. Ostatnie odczyty zachowuje lokalnie na tym urządzeniu. Czas wyświetlany dla Polski.</p></div><div className="footer-sources"><Source href="https://open-meteo.com/">Open-Meteo</Source><Source href={locality.air.sourceUrls[0]}>Czujniki powietrza</Source><Source href="https://danepubliczne.imgw.pl/">IMGW-PIB</Source><Source href={locality.position.sourceUrl}>Punkt prognozy · PRNG</Source></div><p className="attribution">Kod strony jest publicznie dostępny na portalu GitHub. <Source href="https://github.com/strzelcu/szczedrzyk">Zobacz repozytorium</Source></p><p className="attribution">Propozycje zmian można zgłaszać w <Source href="https://github.com/strzelcu/szczedrzyk/issues">GitHub Issues repozytorium</Source>.</p><p className="attribution">Dane Instytutu Meteorologii i Gospodarki Wodnej – Państwowego Instytutu Badawczego zostały przetworzone. Dane operacyjne mogą podlegać korektom.</p><p className="attribution">Strona została wygenerowana przez AI i może zawierać błędy.</p>
+ <footer><div><p>Dane pogodowe i pomiarowe pobiera Twoja przeglądarka przy otwarciu strony, co godzinę i po kliknięciu „Odśwież dane”. Ostatnie odczyty zachowuje lokalnie na tym urządzeniu. Czas wyświetlany dla Polski.</p></div><div className="footer-sources"><Source href="https://open-meteo.com/">Open-Meteo</Source><Source href={locality.air.sourceUrls[0]}>Czujniki powietrza</Source><Source href="https://danepubliczne.imgw.pl/">IMGW-PIB</Source><Source href={locality.position.sourceUrl}>Punkt prognozy · PRNG</Source></div><p className="attribution">Kod strony jest publicznie dostępny na portalu GitHub. <Source href="https://github.com/strzelcu/szczedrzyk">Zobacz repozytorium</Source></p>
+ <FeedbackContact />
+ <p className="attribution">Dane Instytutu Meteorologii i Gospodarki Wodnej – Państwowego Instytutu Badawczego zostały przetworzone. Dane operacyjne mogą podlegać korektom.</p><p className="attribution">Strona została wygenerowana przez AI i może zawierać błędy.</p>
  <p className="footer-brand w-full text-center">
    <a href="https://strzelcu.github.io/" className="inline-flex items-center gap-3 text-lg underline underline-offset-2">
      <img src={import.meta.env.BASE_URL + "programista-na-wsi.webp"} alt="" width={48} height={48} loading="lazy" className="shrink-0 object-contain"/>

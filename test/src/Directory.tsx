@@ -1,6 +1,7 @@
 import { Building2, MapPin } from "lucide-react";
 import type { Locality } from "./lib/locality";
 import Header from "./Header";
+import FeedbackContact from "./components/FeedbackContact";
 
 export default function Directory({ localities }: { localities: Locality[] }) {
   const sorted = [...localities].sort((a, b) => a.name.localeCompare(b.name, "pl"));
@@ -27,6 +28,7 @@ export default function Directory({ localities }: { localities: Locality[] }) {
       </nav>
       <footer className="directory-footer">
         <a href={base.replace(/test\/$/, "")}>Dashboard Szczedrzyka · wersja główna</a>
+        <FeedbackContact />
         <p>Strona została wygenerowana przez AI i może zawierać błędy.</p>
       </footer>
     </main>
