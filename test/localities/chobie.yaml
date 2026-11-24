@@ -26,6 +26,20 @@ air:
       latitude: 50.70567
       longitude: 18.27927
       sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=7821
+    - provider: syngeos
+      id: '8104'
+      locality: Zębowice
+      address: Dobrodzieńska 32
+      latitude: 50.7614
+      longitude: 18.34901
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8104
+    - provider: syngeos
+      id: '1530'
+      locality: Krasiejów
+      address: Spóracka 19
+      latitude: 50.67048
+      longitude: 18.24907
+      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=1530
 water:
   sourceUrl: https://dane.gov.pl/pl/dataset/2167%2Cmapa-podzialu-hydrograficznego
   rivers:
