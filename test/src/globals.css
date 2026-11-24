@@ -396,9 +396,10 @@ footer p { margin-top: var(--dashboard-space-sm); }
 .summary-waste li{display:flex;flex-direction:column;gap:2px}
 .air-stations{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px;margin:10px 0 22px}
 .air-station{display:flex;flex-direction:column;min-width:0;border:1px solid var(--border);border-radius:12px;background:#f8fafc;padding:15px}
-.air-station-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.air-station-heading{display:grid;grid-template-columns:minmax(0,1fr) max-content;align-items:start;gap:8px}
 .air-station h3,.watercourse h3,.water-station h4,.waste-area h3{color:#16304a;font-size:1rem;font-weight:700;margin:0}
-.air-station h3 span{display:block;font-size:.875rem;font-weight:450;color:#526b80}
+.air-station h3,.air-station-address{overflow-wrap:anywhere}
+.air-station-address{margin:0;font-size:.875rem;font-weight:450;color:#526b80}
 .air-station .section-meta{margin:6px 0 12px}
 .air-station .air-status{padding:8px 11px}
 .air-station .air-status strong{font-size:1rem}
@@ -416,4 +417,4 @@ footer p { margin-top: var(--dashboard-space-sm); }
 .waste-subsection+.waste-subsection{padding-top:18px;margin-top:18px;border-top:1px solid var(--border)}
 .waste-area{align-items:baseline;flex-wrap:wrap}
 .waste-next h4{margin:3px 0 0;font-size:1rem;font-weight:700}
-@media(max-width:420px){.preview-topbar .brand{font-size:1.05rem}.preview-topbar .brand-icon{width:36px;height:36px}.air-station .air-station-heading{flex-wrap:wrap}}
+@media(max-width:420px){.preview-topbar .brand{font-size:1.05rem}.preview-topbar .brand-icon{width:36px;height:36px}}
