@@ -52,7 +52,6 @@ main,.topbar-inner,main>*,.dashboard-grid>*,.current-weather-column>*,.water-gri
  .water-heading .source-link{align-self:flex-start}
  .air-chart text{font-size:18px}
  .chart-legend{gap:10px 16px}
- footer{flex-direction:column}
  .footer-sources{gap:10px 16px}
  .forecast-values .hourly-table{min-width:100%;width:100%}
  .forecast-values .hourly-table th,.forecast-values .hourly-table td{min-width:0;padding:10px 6px;white-space:normal}
@@ -241,8 +240,16 @@ body { font-size: var(--dashboard-text-body); line-height: 1.5; }
 .waste-next h3 { margin: var(--dashboard-space-sm) 0 var(--dashboard-space-xs); }
 .card .waste-reminder { max-width: none; margin: var(--dashboard-space-md) 0; }
 .waste-fractions { margin-bottom: var(--dashboard-space-md); }
-footer { gap: var(--dashboard-space-md); padding-top: var(--dashboard-space-lg); line-height: 1.5; }
+footer {
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: var(--dashboard-space-md);
+  padding-top: var(--dashboard-space-lg);
+  line-height: 1.5;
+  text-align: center;
+}
 footer p { margin-top: var(--dashboard-space-sm); }
+.footer-sources { justify-content: center; }
 @media (max-width: 760px) {
   :root {
     --dashboard-card-padding: clamp(14px, 4vw, 20px);
