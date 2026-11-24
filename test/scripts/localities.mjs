@@ -32,8 +32,9 @@ export function checkLocality(contents, fileName) {
 
   const sensors = rankedSensors(config);
   unique(sensors.map(sensor => sensor.id), "identyfikatory czujników", fileName);
-  const distant = sensors.filter(sensor => !sensor.local && sensor.distanceKm > config.air.radiusKm);
-  if (distant.length && sensors.length !== 1) throw Error(`${fileName}: czujnik spoza promienia może być jedyną stacją zastępczą`);
+  if (sensors.length > 1 && sensors.some(sensor => !sensor.local)) {
+    throw Error(`${fileName}: wpisz wyłącznie lokalne czujniki lub jeden czujnik zastępczy`);
+  }
   unique(config.water.rivers.map(river => river.name), "nazwy cieków", fileName);
   unique(config.water.rivers.flatMap(river => river.gauges.map(gauge => gauge.id)), "identyfikatory wodowskazów", fileName);
 

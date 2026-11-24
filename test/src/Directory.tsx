@@ -25,7 +25,10 @@ export default function Directory({ localities }: { localities: Locality[] }) {
           })}
         </ul>
       </nav>
-      <footer className="directory-footer"><a href={base.replace(/test\/$/, "")}>Dashboard Szczedrzyka · wersja główna</a></footer>
+      <footer className="directory-footer">
+        <a href={base.replace(/test\/$/, "")}>Dashboard Szczedrzyka · wersja główna</a>
+        <p>Strona została wygenerowana przez AI i może zawierać błędy.</p>
+      </footer>
     </main>
   </>;
 }

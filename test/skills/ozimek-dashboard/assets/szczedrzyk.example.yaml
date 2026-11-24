@@ -18,7 +18,6 @@ warnings:
     - name: Mała Panew
       aliases: [Mała Panew, Małej Panwi]
 air:
-  radiusKm: 10
   sourceUrls: [https://ozimek.pl/]
   sensors: []
 water:

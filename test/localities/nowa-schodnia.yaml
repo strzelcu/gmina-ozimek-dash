@@ -17,7 +17,6 @@ warnings:
     - name: Mała Panew
       aliases: [Mała Panew, Małej Panwi]
 air:
-  radiusKm: 10
   sourceUrls: ['https://ozimek.pl/#:~:text=Jako%C5%9B%C4%87%20powietrza%20w%20Gminie%20Ozimek', 'https://panel.syngeos.pl/']
   sensors:
     - provider: syngeos
@@ -27,69 +26,6 @@ air:
       latitude: 50.66864
       longitude: 18.19926
       sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8230
-    - provider: syngeos
-      id: '8228'
-      locality: Ozimek
-      address: ks. Jana Dzierżona 4B
-      latitude: 50.68023
-      longitude: 18.20991
-      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8228
-    - provider: syngeos
-      id: '10318'
-      locality: Ozimek
-      address: Janusza Korczaka 12
-      latitude: 50.67821
-      longitude: 18.22168
-      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=10318
-    - provider: syngeos
-      id: '8229'
-      locality: Antoniów
-      address: Powstańców Śląskich 17
-      latitude: 50.68661
-      longitude: 18.20347
-      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8229
-    - provider: syngeos
-      id: '10335'
-      locality: Krasiejów
-      address: Szkolna 5
-      latitude: 50.66705
-      longitude: 18.24255
-      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=10335
-    - provider: syngeos
-      id: '1530'
-      locality: Krasiejów
-      address: Spóracka 19
-      latitude: 50.67048
-      longitude: 18.24907
-      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=1530
-    - provider: syngeos
-      id: '10417'
-      locality: Szczedrzyk
-      address: Opolska 1
-      latitude: 50.70479
-      longitude: 18.152054
-      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=10417
-    - provider: syngeos
-      id: '7821'
-      locality: Grodziec
-      address: Tartaczna 1
-      latitude: 50.70567
-      longitude: 18.27927
-      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=7821
-    - provider: syngeos
-      id: '8227'
-      locality: Dylaki
-      address: Szkolna 5
-      latitude: 50.73853
-      longitude: 18.19037
-      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=8227
-    - provider: syngeos
-      id: '7357'
-      locality: Chrząstowice
-      address: Dworcowa 1
-      latitude: 50.663982
-      longitude: 18.07022
-      sourceUrl: https://panel.syngeos.pl/sensor/pm10?device=7357
 water:
   sourceUrl: https://dane.gov.pl/pl/dataset/2167%2Cmapa-podzialu-hydrograficznego
   rivers:

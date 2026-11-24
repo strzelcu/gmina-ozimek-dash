@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readLocalities } from "../scripts/localities.mjs";
+import { checkLocality, readLocalities } from "../scripts/localities.mjs";
 import { loadSource } from "../scripts/lib/sources.ts";
 import { normalizeWarnings } from "../scripts/lib/local-warnings.ts";
 import { weatherUrl } from "../scripts/lib/weather-data.ts";
 import { rankedSensors } from "../src/lib/locality.ts";
+import { formatTemperature } from "../src/lib/temperature.ts";
 import { currentSchedules } from "../src/lib/waste.ts";
 
 const localities = readLocalities();
@@ -20,30 +21,46 @@ test("the forecast sends the verified point of each locality", () => {
   assert.equal(new Set(forecastUrls).size, localities.length);
 });
 
-test("all three city sensors precede nearby stations and others are sorted by distance", () => {
-  const sensors = rankedSensors(locality("ozimek"));
-  assert.deepEqual(sensors.slice(0, 3).map(sensor => sensor.id), ["8228", "10318", "8230"]);
-  assert.ok(sensors.slice(3).every(sensor => !sensor.local && sensor.distanceKm <= 10));
-  assert.ok(sensors.slice(3).every((sensor, index, nearby) => index === 0 || sensor.distanceKm >= nearby[index - 1].distanceKm));
-  const village = rankedSensors(locality("krasiejow"));
-  assert.deepEqual(village.filter(sensor => sensor.local).map(sensor => sensor.id), ["1530", "10335"]);
-  assert.ok(rankedSensors(locality("dylaki")).some(sensor => sensor.locality === "Kobylno"));
+test("near-zero temperatures display as zero", () => {
+  for (const value of [-0, -0.49, 0, 0.49]) assert.equal(formatTemperature(value), "0");
+  assert.equal(formatTemperature(-0.5), "-1");
+  assert.equal(formatTemperature(-3.6), "-4");
+  assert.equal(formatTemperature(0.5), "1");
+  assert.equal(formatTemperature(null), "—");
 });
 
-test("an unavailable Grodziec sensor is independent of successful nearby readings", async () => {
-  const grodziec = locality("grodziec");
-  const data = await loadSource(grodziec, "air", async url => {
-    const id = url.split("/").at(-1)!;
-    const sensor = grodziec.air.sensors.find(sensor => sensor.id === id)!;
-    return { id: Number(id), city: `${sensor.locality} gm. Ozimek`, address: sensor.address,
-      sensors: ["pm2_5", "pm10"].map(name => ({ name, data: id === "7821" ? [] : [
-        { read_at: new Date().toISOString(), value: 0, current_norm: "grade-a" },
-      ] })),
-    };
-  });
-  assert.deepEqual(data.failed, ["7821"]);
-  assert.equal(Object.keys(data.stations).length, grodziec.air.sensors.length - 1);
-  assert.equal(data.stations["8228"].pm10?.value, 0);
+test("air configurations keep all local sensors or a single sensor from the nearest locality", () => {
+  assert.deepEqual(rankedSensors(locality("ozimek")).map(sensor => [sensor.id, sensor.local]),
+    [["8228", true], ["10318", true], ["8230", true]]);
+  assert.deepEqual(rankedSensors(locality("krasiejow")).map(sensor => [sensor.id, sensor.local]), [["1530", true], ["10335", true]]);
+  for (const [slug, name, id] of [
+    ["biestrzynnik", "Dylaki", "8227"], ["chobie", "Grodziec", "7821"], ["jedlice", "Antoniów", "8229"],
+    ["krzyzowa-dolina", "Krasiejów", "10335"], ["mnichus", "Grodziec", "7821"], ["nowa-schodnia", "Ozimek", "8230"],
+    ["pustkow", "Antoniów", "8229"], ["schodnia", "Antoniów", "8229"],
+  ]) {
+    assert.deepEqual(rankedSensors(locality(slug)).map(sensor => [sensor.locality, sensor.id, sensor.local]), [[name, id, false]], slug);
+  }
+});
+
+test("a locality cannot mix its own sensors with a fallback", () => {
+  const ozimek = structuredClone(locality("ozimek"));
+  ozimek.air.sensors.push(locality("dylaki").air.sensors[0]);
+  assert.throws(() => checkLocality(JSON.stringify(ozimek), "ozimek.yaml"), /wyłącznie lokalne czujniki lub jeden czujnik zastępczy/);
+});
+
+test("a temporary outage retains the configured local or fallback station", async () => {
+  for (const slug of ["grodziec", "chobie"]) {
+    const requested: string[] = [];
+    const data = await loadSource(locality(slug), "air", async url => {
+      requested.push(url.split("/").at(-1)!);
+      return { id: 7821, city: "Grodziec gm. Ozimek", address: "Tartaczna 1",
+        sensors: [{ name: "pm2_5", data: [] }, { name: "pm10", data: [] }],
+      };
+    });
+    assert.deepEqual(requested, ["7821"], slug);
+    assert.deepEqual(data.failed, ["7821"], slug);
+    assert.deepEqual(data.stations, {}, slug);
+  }
 });
 
 test("only relevant water gauge IDs and waterways are used", async () => {
