@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 import { weatherUrl } from "../../scripts/lib/weather-data.ts";
 import { syngeosUrl } from "../../scripts/lib/air.ts";
 import { hydroUrl } from "../../scripts/lib/sources.ts";
+import { dashboardBasePath } from "../../scripts/dashboard-path.mjs";
 import { rankedSensors, type Locality } from "../../src/lib/locality.ts";
 
 const hour = 3_600_000;
@@ -107,7 +108,7 @@ export async function mockSources(page: Page, locality: Locality, options: {
     const { origin, pathname } = new URL(route.request().url());
     if (origin === "http://127.0.0.1:4173") {
       // Ignore whatever data snapshot happened to be bundled into this build.
-      if (pathname.includes("/test/data/")) return route.fulfill({ status: 404 });
+      if (pathname.startsWith(`${dashboardBasePath}data/`)) return route.fulfill({ status: 404 });
       return route.continue();
     }
     if (options.gate) await options.gate;

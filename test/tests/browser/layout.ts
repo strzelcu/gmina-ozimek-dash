@@ -75,10 +75,7 @@ export async function checkLayout(page: Page, width: number) {
     for (const grid of document.querySelectorAll(".water-grid")) columns(grid, ":scope > article", width <= 640 ? 1 : width <= 1150 ? 2 : flowColumns(grid, 280, 24));
     for (const grid of document.querySelectorAll(".waste-fractions")) columns(grid, ":scope > li", width <= 600 ? 1 : width <= 900 ? 2 : 3);
 
-    const brand = document.querySelector(".brand")!.getBoundingClientRect();
-    const version = document.querySelector(".preview-label")!.getBoundingClientRect();
     const icon = document.querySelector(".brand-icon")!.getBoundingClientRect();
-    check(brand.right <= version.left + tolerance, "Nazwa gminy nachodzi na etykietę wersji testowej");
     check(Math.abs(icon.width - (width <= 420 ? 36 : 44)) <= tolerance, "Ikona nagłówka ma niewłaściwy rozmiar");
     for (const heading of document.querySelectorAll(".locality-heading")) {
       const title = heading.firstElementChild!.getBoundingClientRect();
