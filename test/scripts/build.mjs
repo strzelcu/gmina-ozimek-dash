@@ -13,10 +13,10 @@ const escapeHtml = value => value.replace(/[&<>"']/g, char => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 })[char]);
 
-await Promise.all(localities.map(async ({ name, slug }) => {
+await Promise.all(localities.map(async ({ name, slug, municipality }) => {
   const directory = new URL(`${slug}/`, output);
   const title = escapeHtml(`${name} · Dashboard miejscowości`);
-  const description = escapeHtml(`Pogoda, powietrze, stany wód i terminy odbioru odpadów. ${name}, gmina Ozimek.`);
+  const description = escapeHtml(`Pogoda, powietrze, stany wód i terminy odbioru odpadów. ${name}, ${municipality}.`);
   const html = template.replace(/<title>.*?<\/title>/, () => `<title>${title}</title>`)
     .replace(/(<meta name="description" content=")[^"]*/, (_, start) => start + description);
   await mkdir(directory, { recursive: true });
