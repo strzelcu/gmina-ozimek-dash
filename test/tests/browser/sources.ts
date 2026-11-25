@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 import { weatherUrl } from "../../scripts/lib/weather-data.ts";
 import { syngeosUrl } from "../../scripts/lib/air.ts";
 import { hydroUrl } from "../../scripts/lib/sources.ts";
-import type { Locality } from "../../src/lib/locality.ts";
+import { rankedSensors, type Locality } from "../../src/lib/locality.ts";
 
 const hour = 3_600_000;
 const day = 24 * hour;
@@ -15,6 +15,7 @@ const requestKey = (url: string) => {
 // Choose a date with a collection on day seven using the newest YAML schedule.
 export function layoutTime(locality: Locality) {
   const schedule = [...locality.waste.schedules].sort((a, b) => b.validFrom.localeCompare(a.validFrom))[0];
+  if (!schedule) return Date.UTC(2026, 0, 1, 6);
   const start = Date.parse(`${schedule.validFrom}T06:00:00Z`);
   const collection = schedule.collections.find(entry => Date.parse(`${entry.date}T06:00:00Z`) >= start + 7 * day);
   return collection ? Date.parse(`${collection.date}T06:00:00Z`) - 7 * day : start;
@@ -85,7 +86,7 @@ export async function mockSources(page: Page, locality: Locality, options: {
       obszary: [{ opis: catchment.aliases[0], wojewodztwo: locality.warnings.voivodeship }],
     }] : []],
   ]);
-  for (const [index, sensor] of locality.air.sensors.entries()) {
+  for (const [index, sensor] of rankedSensors(locality).entries()) {
     const samples = (count: number) => ({
       id: sensor.id, city: sensor.locality, address: sensor.address,
       sensors: ["pm2_5", "pm10"].map((name, pollutant) => ({

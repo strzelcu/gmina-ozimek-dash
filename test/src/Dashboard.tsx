@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo, useRef, type SetStateAction } from "react";
-import { CloudSun, Wind, MapPin, RefreshCw, Droplets, Thermometer, Gauge, Sun, Cloud, CloudRain, Moon, Sunrise, Sunset, ExternalLink, Trash2, ArrowDownRight, ArrowUp, Flower2 } from "lucide-react";
+import { CloudSun, Wind, MapPin, RefreshCw, Droplets, Thermometer, Gauge, Sun, Cloud, CloudRain, Moon, Sunrise, Sunset, Trash2, ArrowDownRight, ArrowUp, Flower2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cachedData, refreshData } from "./lib/browser-data";
@@ -8,7 +8,8 @@ import Header from "./Header";
 import WarningsSection from "./components/WarningsSection";
 import WaterSection from "./components/WaterSection";
 import EnvironmentExtras, { pollenPlants, usePollenForecast } from "./components/EnvironmentExtras";
-import FeedbackContact from "./components/FeedbackContact";
+import DashboardFooter from "./components/DashboardFooter";
+import Source from "./components/SourceLink";
 import WasteSection, { formatWasteDate, useWasteDay } from "./components/WasteSection";
 import { fractions, relativeDay, wasteScheduleWeeks } from "./lib/waste";
 import { distanceLabel, rankedSensors, type Locality } from "./lib/locality";
@@ -20,7 +21,6 @@ const number = (v: any, decimals = 0) => v === null || v === undefined || !Numbe
 function localDate(value: string) { return value ? new Intl.DateTimeFormat("pl-PL", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit", timeZone:"Europe/Warsaw" }).format(new Date(value)) : "Brak czasu pomiaru"; }
 function condition(code: number) { if(code===0)return "Bezchmurnie";if(code<=2)return "Częściowe zachmurzenie";if(code===3)return "Pochmurno";if(code<=48)return "Mgła";if(code<=57)return "Mżawka";if(code<=67)return "Deszcz";if(code<=77)return "Śnieg";if(code<=82)return "Przelotny deszcz";if(code<=86)return "Przelotny śnieg";return "Burza"; }
 function WeatherIcon({code,night=false,className=""}:{code:number;night?:boolean;className?:string}) { const Icon=code===0?(night?Moon:Sun):code<=2?CloudSun:code<=48?Cloud:CloudRain;return <Icon className={className} aria-hidden="true"/>; }
-function Source({children,href}:{children:React.ReactNode;href:string}) { return <a className="source-link" href={href} target="_blank" rel="noreferrer">{children}<ExternalLink size={12} aria-hidden="true"/></a>; }
 export default function Dashboard({ locality }: { locality: Locality }) {
  const [weather, setWeather] = useState<Result<"weather">>(empty);
  const [air, setAir] = useState<Result<"air">>(empty);
@@ -163,15 +163,7 @@ export default function Dashboard({ locality }: { locality: Locality }) {
  <EnvironmentExtras weather={weather} forecast={pollenForecast}/>
  <WaterSection locality={locality} result={water}/>
  <WasteSection waste={locality.waste} today={today} weeks={wasteWeeks}/>
- <footer><div><p>Dane pogodowe i pomiarowe pobiera Twoja przeglądarka przy otwarciu strony, co godzinę i po kliknięciu „Odśwież dane”. Ostatnie odczyty zachowuje lokalnie na tym urządzeniu. Czas wyświetlany dla Polski.</p></div><div className="footer-sources"><Source href="https://open-meteo.com/">Open-Meteo</Source><Source href={locality.air.sourceUrls[0]}>Czujniki powietrza</Source><Source href="https://danepubliczne.imgw.pl/">IMGW-PIB</Source><Source href={locality.position.sourceUrl}>Punkt prognozy · PRNG</Source></div><p className="attribution">Kod strony jest publicznie dostępny na portalu GitHub. <Source href="https://github.com/strzelcu/szczedrzyk">Zobacz repozytorium</Source></p>
- <FeedbackContact />
- <p className="attribution">Dane Instytutu Meteorologii i Gospodarki Wodnej – Państwowego Instytutu Badawczego zostały przetworzone. Dane operacyjne mogą podlegać korektom.</p><p className="attribution">Strona została wygenerowana przez AI i może zawierać błędy.</p>
- <p className="footer-brand w-full text-center">
-   <a href="https://strzelcu.github.io/" className="inline-flex items-center gap-3 text-lg underline underline-offset-2">
-     <img src={import.meta.env.BASE_URL + "programista-na-wsi.webp"} alt="" width={48} height={48} loading="lazy" className="shrink-0 object-contain"/>
-     Programista na wsi
-   </a>
- </p></footer>
+ <DashboardFooter locality={locality} />
  </main>
  {showBackToTop && <a className="back-to-top" href="#page-top"><ArrowUp size={18} aria-hidden="true"/>Na górę</a>}
  </>;

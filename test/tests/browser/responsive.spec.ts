@@ -6,36 +6,54 @@ import { mockSources } from "./sources.ts";
 
 const localities: Locality[] = readLocalities();
 const linkedSections = ["air-measurements", "weather-details", "pollen-title", "waste-details"];
+const directoryLinkName = ({ name, kind }: Locality) => `${name} ${kind === "city" ? "Miasto" : "Sołectwo"}`;
 
 async function openDashboard(page: Page, locality: Locality) {
   const document = await page.goto(`${locality.slug}/`);
   expect(document?.status()).toBe(200);
   // Inspect the generated HTML too. The application can set the title after a server fallback.
-  expect(await document!.text()).toContain(`<title>${locality.name} · Dashboard miejscowości</title>`);
+  const metadata = await page.evaluate(html => {
+    const generated = new DOMParser().parseFromString(html, "text/html");
+    return { title: generated.title, description: generated.querySelector('meta[name="description"]')?.getAttribute("content") };
+  }, await document!.text());
+  expect(metadata.title).toBe(`${locality.name} · Dashboard miejscowości`);
+  expect(metadata.description).toContain(`${locality.name}, ${locality.municipality}.`);
   await expect(page.getByRole("heading", { level: 1, name: locality.name })).toBeVisible();
 }
 
-async function ready(page: Page) {
+async function ready(page: Page, locality: Locality) {
   await expect(page.getByRole("button", { name: "Odśwież dane" })).toBeEnabled();
-  await expect(page.locator(".air-forecast svg")).toBeVisible();
+  if (locality.air.sensors.length) await expect(page.locator(".air-forecast svg")).toBeVisible();
+  else await expect(page.getByText("Brak zweryfikowanych czujników w danych dla tej miejscowości.")).toBeVisible();
   await expect(page.getByText(/Godzina prognozy:/)).toBeVisible();
 }
 
-async function checkFooter(page: Page) {
-  const footer = page.locator("main footer");
+async function checkFooter(page: Page, locality?: Locality) {
+  const footer = page.locator("main .dashboard-footer");
+  await expect(footer).toHaveCSS("text-align", "center");
+  await expect(footer.locator(".footer-sources a")).toHaveText(["Open-Meteo", "Czujniki powietrza", "IMGW-PIB", "Punkt prognozy · PRNG"]);
+  await expect(footer.getByRole("link", { name: "Punkt prognozy · PRNG" })).toHaveAttribute("href", locality?.position.sourceUrl
+    ?? "https://www.geoportal.gov.pl/pl/dane/panstwowy-rejestr-nazw-geograficznych-prng/");
+  await expect(footer.getByRole("link", { name: "Czujniki powietrza" })).toHaveAttribute("href", locality?.air.sourceUrls[0] ?? "https://panel.syngeos.pl/");
+  await expect(footer.getByRole("link", { name: "Zobacz repozytorium" })).toHaveAttribute("href", "https://github.com/strzelcu/szczedrzyk");
   await expect(footer.getByRole("link", { name: "GitHub Issues" })).toHaveAttribute("href", "https://github.com/strzelcu/szczedrzyk/issues");
   await expect(footer.getByRole("link", { name: "mlody_analog3f@icloud.com" })).toHaveAttribute("href", "mailto:mlody_analog3f@icloud.com");
   await expect(footer.getByText("Strona została wygenerowana przez AI i może zawierać błędy.")).toBeVisible();
+  const brand = footer.getByRole("link", { name: "Programista na wsi" });
+  await expect(brand).toHaveAttribute("href", "https://strzelcu.github.io/");
+  await expect(brand.locator("img")).toHaveAttribute("src", new URL(`${locality ? "../" : ""}programista-na-wsi.webp`, page.url()).pathname);
 }
 
 test("katalog miejscowości przy każdej szerokości", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByRole("heading", { level: 1, name: "Dashboardy miejscowości" })).toBeVisible();
   const navigation = page.getByRole("navigation", { name: "Miejscowości gminy Ozimek" });
-  await expect(navigation.getByRole("link")).toHaveCount(14);
+  await expect(navigation.getByRole("link")).toHaveCount(localities.length);
   for (const locality of localities) {
-    await expect(navigation.getByRole("link", { name: `${locality.name} ${locality.kind === "city" ? "Miasto" : "Sołectwo"}`, exact: true }))
-      .toHaveAttribute("href", new URL(`${locality.slug}/`, page.url()).pathname);
+    const link = navigation.getByRole("link", { name: directoryLinkName(locality), exact: true });
+    await expect(link).toHaveAttribute("href", new URL(`${locality.slug}/`, page.url()).pathname);
+    const icon = locality.kind === "city" ? "building-2" : "house";
+    await expect(link.locator(`svg.lucide-${icon}`)).toHaveAttribute("aria-hidden", "true");
   }
   await expect(page.getByRole("link", { name: "Dashboard Szczedrzyka · wersja główna" })).toHaveAttribute("href", new URL("../", page.url()).pathname);
   await checkFooter(page);
@@ -48,7 +66,7 @@ for (const locality of localities) {
     page.on("pageerror", error => pageErrors.push(error.message));
     const now = await mockSources(page, locality);
     await openDashboard(page, locality);
-    await ready(page);
+    await ready(page, locality);
 
     const summary = page.getByRole("region", { name: "Na dziś" });
     await expect(summary.getByRole("link")).toHaveCount(linkedSections.length);
@@ -78,12 +96,16 @@ for (const locality of localities) {
       expect(await page.locator(selector).evaluateAll(nodes => nodes.map(node => node.getAttribute("datetime")).sort())).toEqual(dates);
     }
     await expect(page.locator(".waste-fractions > li")).toHaveCount(6 * schedules.length);
-    await checkFooter(page);
+    if (!locality.waste.schedules.length) {
+      await expect(summary.getByText("Brak aktualnego harmonogramu")).toBeVisible();
+      await expect(page.getByText("Brak aktualnego harmonogramu w dashboardzie. Sprawdź wykaz gminy.")).toBeVisible();
+    }
+    await checkFooter(page, locality);
 
     // Expose the warning text, chart tables and air quality scale for layout checks.
     for (const disclosure of await page.locator("main details > summary").all()) await disclosure.click();
-    await expect(page.locator(".aq-legend-row")).toHaveCount(7);
-    await expect(page.locator(".air-forecast tbody tr")).toHaveCount(25);
+    await expect(page.locator(".aq-legend-row")).toHaveCount(locality.air.sensors.length ? 7 : 0);
+    await expect(page.locator(".air-forecast tbody tr")).toHaveCount(locality.air.sensors.length ? 25 : 0);
     await expect(page.locator('[aria-labelledby="sun-title"] tbody tr').first()).toBeVisible();
     for (const width of widths) await test.step(`${width} px`, () => checkLayout(page, width));
     expect(pageErrors).toEqual([]);
@@ -92,12 +114,12 @@ for (const locality of localities) {
 
 for (const width of [320, 1440]) {
   test(`nawigacja, odświeżanie, wybór czujnika i tabele przy ${width} px`, async ({ page }) => {
-    const locality = localities.find(entry => entry.slug === "biestrzynnik")!;
+    const locality = localities.find(entry => entry.air.sensors.length > 1) ?? localities[0];
     await page.setViewportSize({ width, height: 900 });
     await mockSources(page, locality);
     await page.goto("./");
-    await page.getByRole("link", { name: "Biestrzynnik Sołectwo", exact: true }).click();
-    await ready(page);
+    await page.getByRole("link", { name: directoryLinkName(locality), exact: true }).click();
+    await ready(page, locality);
 
     for (const section of linkedSections) {
       await page.locator(`.daily-summary-item[href="#${section}"]`).click();
@@ -115,19 +137,22 @@ for (const width of [320, 1440]) {
     await forecastRefresh;
     await expect(refresh).toBeEnabled();
 
-    const sensor = rankedSensors(locality).at(-1)!;
-    await page.getByLabel("Czujnik dla historii pomiarów").selectOption(sensor.id);
-    await expect(page.locator(".air-forecast").getByRole("link", { name: `Syngeos · ${sensor.locality}, ${sensor.address}` }))
-      .toHaveAttribute("href", sensor.sourceUrl);
-    const history = page.getByText("Wartości godzinowe", { exact: true });
-    const historyTable = page.locator(".air-forecast table");
-    await expect(historyTable).toBeHidden();
-    await history.click();
-    await expect(historyTable).toBeVisible();
-    await expect(historyTable.locator("tbody tr")).toHaveCount(20);
-    await checkLayout(page, width);
-    await history.click();
-    await expect(historyTable).toBeHidden();
+    const sensors = rankedSensors(locality);
+    const sensor = sensors.at(-1);
+    if (sensor) {
+      if (sensors.length > 1) await page.getByLabel("Czujnik dla historii pomiarów").selectOption(sensor.id);
+      await expect(page.locator(".air-forecast").getByRole("link", { name: `Syngeos · ${sensor.locality}, ${sensor.address}` }))
+        .toHaveAttribute("href", sensor.sourceUrl);
+      const history = page.getByText("Wartości godzinowe", { exact: true });
+      const historyTable = page.locator(".air-forecast table");
+      await expect(historyTable).toBeHidden();
+      await history.click();
+      await expect(historyTable).toBeVisible();
+      await expect(historyTable.locator("tbody tr")).toHaveCount(sensors.length > 1 ? 20 : 25);
+      await checkLayout(page, width);
+      await history.click();
+      await expect(historyTable).toBeHidden();
+    }
 
     const hourly = page.getByRole("region", { name: /Prognoza godzinowa — przewiń/ });
     const reachedEnd = await hourly.evaluate(scroll => {
@@ -147,7 +172,7 @@ for (const width of [320, 1440]) {
 }
 
 test("ładowanie i niedostępne dane nie rozbijają układu", async ({ page }) => {
-  const locality = localities.find(entry => entry.slug === "nowa-schodnia")!;
+  const locality = localities.find(entry => entry.waste.schedules.length > 1) ?? localities[0];
   const gate = Promise.withResolvers<void>();
   await mockSources(page, locality, { gate: gate.promise, offline: true });
   try {
@@ -159,7 +184,7 @@ test("ładowanie i niedostępne dane nie rozbijają układu", async ({ page }) =
   }
   await expect(page.getByRole("button", { name: "Odśwież dane" })).toBeEnabled();
   await expect(page.getByText("Pogoda chwilowo niedostępna.", { exact: false })).toBeVisible();
-  await expect(page.getByText("Historia pomiarów chwilowo niedostępna.")).toBeVisible();
+  if (locality.air.sensors.length) await expect(page.getByText("Historia pomiarów chwilowo niedostępna.")).toBeVisible();
   await expect(page.getByText(/Nie udało się odświeżyć prognozy pylenia/)).toBeVisible();
   await expect(page.getByRole("region", { name: "Wody w okolicy" })).toHaveCount(0);
   for (const width of widths) await test.step(`Brak danych przy ${width} px`, () => checkLayout(page, width));
