@@ -17,6 +17,8 @@ npm run preview --prefix test
 
 Domyślny adres podglądu kończy się na `/gmina-ozimek/`. Ustaw `DASHBOARD_BASE_PATH`, aby sprawdzić inną ścieżkę. Użyj tej samej wartości przy kompilacji, podglądzie i testach. Krok `data` jest opcjonalny podczas pracy lokalnej. Zapisuje dane startowe w `test/public/data/`. Przeglądarka odświeża dane podczas otwierania strony, co godzinę i przy użyciu przycisku odświeżania. Każda sekcja ma własny stan błędu, a pamięć podręczna używa identyfikatora miejscowości.
 
+Dashboardy działają bez analityki i śledzenia odwiedzin. Przeglądarka zachowuje lokalnie dane źródłowe, w tym prognozy, ostrzeżenia i odczyty, aby móc je wyświetlić przy chwilowym braku połączenia. [Zgłoszenia w repozytorium](https://github.com/strzelcu/gmina-ozimek-dash/issues)
+
 ## Testy układu
 
 ```sh
@@ -50,4 +52,4 @@ GitHub Actions uruchamia te testy także w pull requestach do `main`. Jeśli tes
 
 ## Publikacja i wycofanie
 
-Workflow głównej witryny `strzelcu/strzelcu.github.io` buduje wskazany commit tego repozytorium i dołącza `test/dist/` jako `out/gmina-ozimek/`. Błąd walidacji, testów jednostkowych lub testów układu blokuje publikację. Aby wydać kolejną wersję, zmień SHA źródła w workflow głównej witryny. Aby cofnąć instalację lub aktualizację katalogu, cofnij odpowiedni commit w repozytorium głównej witryny. [Workflow głównej witryny](https://github.com/strzelcu/strzelcu.github.io/blob/main/.github/workflows/pages.yml)
+Workflow głównej witryny `strzelcu/strzelcu.github.io` buduje wskazany commit `strzelcu/gmina-ozimek-dash`, dołącza `test/dist/` jako `out/gmina-ozimek/` i publikuje przekierowanie z `/szczedrzyk/`. Błąd walidacji, testów jednostkowych lub testów układu blokuje wdrożenie. Aby wydać kolejną wersję lub ją cofnąć, zaktualizuj SHA źródła w workflow głównej witryny albo cofnij commit zmieniający tę wartość. [Workflow głównej witryny](https://github.com/strzelcu/strzelcu.github.io/blob/main/.github/workflows/pages.yml)

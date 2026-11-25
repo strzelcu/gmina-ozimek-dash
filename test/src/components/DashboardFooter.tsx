@@ -16,7 +16,7 @@ export default function DashboardFooter({ locality }: { locality?: Locality }) {
       <SourceLink href="https://danepubliczne.imgw.pl/">IMGW-PIB</SourceLink>
       <SourceLink href={positionSource}>Punkt prognozy · PRNG</SourceLink>
     </div>
-    <p className="attribution">Kod strony jest publicznie dostępny na portalu GitHub. <SourceLink href="https://github.com/strzelcu/szczedrzyk">Zobacz repozytorium</SourceLink></p>
+    <p className="attribution">Kod strony jest publicznie dostępny na portalu GitHub. <SourceLink href="https://github.com/strzelcu/gmina-ozimek-dash">Zobacz repozytorium</SourceLink></p>
     <FeedbackContact />
     <p className="attribution">Dane Instytutu Meteorologii i Gospodarki Wodnej – Państwowego Instytutu Badawczego zostały przetworzone. Dane operacyjne mogą podlegać korektom.</p>
     <p className="attribution">Dashboardy nie korzystają z narzędzi analitycznych, nie śledzą odwiedzin i nie zapisują historii Twojej aktywności na stronie.</p>

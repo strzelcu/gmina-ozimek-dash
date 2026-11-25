@@ -18,7 +18,7 @@ async function response(fn) {
   return data;
 }
 const sources = {
-  weather: () => getWeather("https://strzelcu.github.io/szczedrzyk/"),
+  weather: () => getWeather("https://strzelcu.github.io/gmina-ozimek/szczedrzyk/"),
   air: () => response(air),
   water: () => response(water),
   warnings: () => response(warnings),

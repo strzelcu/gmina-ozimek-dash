@@ -22,7 +22,7 @@ Skopiuj [przykład](assets/szczedrzyk.example.yaml) i uzupełnij pola zgodnie ze
 - Kafelek „Na dziś” pokazuje wszystkie odbiory od dziś do siódmego dnia włącznie, również dla kilku rejonów. Daty wyświetla w strefie `Europe/Warsaw`. Temperaturę zaokrągloną do zera wyświetla jako `0°C`.
 - Przy czujniku spoza miejscowości etykieta „Spoza miejscowości” jest po prawej stronie nazwy. Adres ma osobny wiersz i może się zawijać. Starsze odczyty i chwilowe braki danych mają oznaczenia przy urządzeniu.
 - Kafelek wód pokazuje wodowskaz z potwierdzonym poziomem i poprawną datą pomiaru. Cieki bez takich odczytów pomija. Gdy brak wszystkich odczytów, kafelek znika po zakończeniu ładowania.
-- W katalogu rodzaj z YAML dobiera ikonę budynków dla miasta albo ikonę domu dla sołectwa. Katalog i dashboardy korzystają z `test/src/components/DashboardFooter.tsx`. Stopka zawiera źródła danych, link do repozytorium, GitHub Issues, e-mail do zgłoszeń i informację o wygenerowaniu strony przez AI. Linki do czujników i PRNG na dashboardzie wskazują źródła danej miejscowości.
+- W katalogu rodzaj z YAML dobiera ikonę budynków dla miasta albo ikonę domu dla sołectwa. Katalog i dashboardy korzystają z `test/src/components/DashboardFooter.tsx`. Stopka zawiera źródła danych, link do repozytorium, GitHub Issues, e-mail do zgłoszeń oraz informacje o braku śledzenia i wygenerowaniu strony przez AI. Linki do czujników i PRNG na dashboardzie wskazują źródła danej miejscowości.
 
 ## Przejdź cały workflow
 
@@ -42,7 +42,7 @@ npm run test:responsive --prefix test
 1. Otwórz podgląd przez `npm run preview --prefix test`. Domyślna ścieżka to `/gmina-ozimek/`. Jeśli ustawiasz `DASHBOARD_BASE_PATH`, użyj tej samej wartości do kompilacji, podglądu i testów. Sprawdź wpis w katalogu, bezpośredni adres dashboardu i zgodność jego danych z YAML. Zweryfikuj linki źródłowe, odczyty bieżące i stany braku danych.
 2. Sprawdź wersję mobilną i szeroką. Testy Chromium obejmują wszystkie pliki YAML, karty, stopkę, kontrolki i przewijanie oraz szerokości po obu stronach breakpointów. Przy zmianie progów uzupełnij macierz w `test/tests/browser/layout.ts`. [Tabela breakpointów i polecenia](../../README.md#testy-układu)
 3. Umieść konfigurację i związane z nią poprawki w odwracalnym PR do `main`. Przejrzyj zmiany w `test/localities/` i zaczekaj na walidację, testy jednostkowe oraz testy układu.
-4. Po scaleniu zaktualizuj SHA źródła w workflow repozytorium `strzelcu/strzelcu.github.io`. Workflow uruchamia te same testy przed publikacją i zapisuje raport Playwright, jeśli test układu zakończy się błędem. Błąd zatrzymuje wdrożenie.
+4. Po scaleniu zaktualizuj SHA źródła `strzelcu/gmina-ozimek-dash` w workflow repozytorium `strzelcu/strzelcu.github.io`. Workflow uruchamia te same testy przed publikacją i zapisuje raport Playwright, jeśli test układu zakończy się błędem. Błąd zatrzymuje wdrożenie.
 5. Sprawdź wynik `build` i `deploy` oraz otwórz opublikowany katalog i nowy dashboard. Potwierdź ścieżki zasobów i plików danych. Cofnięcie commitu zmieniającego SHA w głównej witrynie publikuje poprzednią kompilację.
 
 ## Skopiuj wzorzec do innej gminy
