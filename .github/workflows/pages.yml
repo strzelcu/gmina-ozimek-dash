@@ -27,27 +27,27 @@ jobs:
           cache: npm
           cache-dependency-path: |
             package-lock.json
-            test/package-lock.json
+            dashboard/package-lock.json
       - run: npm ci
-      - run: npm ci --prefix test
+      - run: npm ci --prefix dashboard
       - name: Check locality configuration and unit tests
         run: |
           node --test tests/*.test.ts
-          npm run check --prefix test
+          npm run check --prefix dashboard
       - name: Build official locality dashboards
-        run: npm run build --prefix test
+        run: npm run build --prefix dashboard
       - name: Install Chromium for Playwright
-        working-directory: test
+        working-directory: dashboard
         run: npx playwright install --with-deps --only-shell chromium
       - name: Check responsive dashboard layout
         id: responsive
-        run: npm run test:responsive --prefix test
+        run: npm run test:responsive --prefix dashboard
       - name: Save browser test results on failure
         if: failure() && steps.responsive.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: responsive-test-results-${{ github.run_attempt }}
-          path: test/test-results/
+          path: dashboard/test-results/
           if-no-files-found: ignore
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'

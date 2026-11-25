@@ -51,8 +51,8 @@ export function checkLocality(contents, fileName) {
 
 export function readLocalities() {
   const files = readdirSync(localityDirectory).filter(name => name.endsWith(".yaml")).sort();
-  if (!files.length) throw Error("Brak konfiguracji miejscowości w test/localities");
+  if (!files.length) throw Error("Brak konfiguracji miejscowości w dashboard/localities");
   const configs = files.map(name => checkLocality(readFileSync(new URL(`../localities/${name}`, import.meta.url), "utf8"), name));
-  unique(configs.map(config => config.simc), "kody SIMC", "test/localities");
+  unique(configs.map(config => config.simc), "kody SIMC", "dashboard/localities");
   return configs;
 }
