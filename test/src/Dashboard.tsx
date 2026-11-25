@@ -44,11 +44,14 @@ export default function Dashboard({ locality }: { locality: Locality }) {
  useEffect(() => {
   const summary = summaryRef.current;
   if (!summary) return;
-  const observer = new IntersectionObserver(([entry]) => {
-   setShowBackToTop(entry.boundingClientRect.bottom <= 0);
-  });
+  const update = () => setShowBackToTop(summary.getBoundingClientRect().bottom <= 0);
+  const observer = new IntersectionObserver(update);
   observer.observe(summary);
-  return () => observer.disconnect();
+  window.addEventListener("scroll", update, { passive: true });
+  return () => {
+   observer.disconnect();
+   window.removeEventListener("scroll", update);
+  };
  }, []);
  const refresh = useCallback(async (initial = false) => {
   if (refreshing.current) return;

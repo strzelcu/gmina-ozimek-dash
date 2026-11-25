@@ -2,63 +2,97 @@ name: Update data and publish dashboard
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: github-pages
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('dashboard-pr-{0}', github.event.pull_request.number) || 'github-pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            test/package-lock.json
       - run: npm ci
+      - run: npm ci --prefix test
+      - name: Check locality configuration and unit tests
+        run: |
+          node --test tests/*.test.ts
+          npm run check --prefix test
       - name: Restore last available measurements
+        if: github.event_name != 'pull_request'
         uses: actions/cache/restore@v4
         with:
           path: .data-cache
           key: measurements-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: measurements-
       - name: Fetch public data
-        run: npm run data
+        if: github.event_name != 'pull_request'
+        run: |
+          npm run data
+          npm run data --prefix test
       - name: Save last available measurements
+        if: github.event_name != 'pull_request'
         uses: actions/cache/save@v4
         with:
           path: .data-cache
           key: measurements-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Configure Pages
+        if: github.event_name != 'pull_request'
         id: pages
         uses: actions/configure-pages@v5
+      - name: Set Pages base path
+        env:
+          BASE_PATH: ${{ github.event_name == 'pull_request' && format('/{0}', github.event.repository.name) || steps.pages.outputs.base_path }}
+        run: echo "PAGES_BASE_PATH=${BASE_PATH}/" >> "$GITHUB_ENV"
       - name: Build static dashboard
         run: npm run build
-        env:
-          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
       - name: Build locality dashboards under /test
+        run: npm run build --prefix test
+      - name: Install Chromium for Playwright
+        working-directory: test
+        run: npx playwright install --with-deps --only-shell chromium
+      - name: Check responsive dashboard layout
+        id: responsive
+        run: npm run test:responsive --prefix test
+      - name: Save browser test results on failure
+        if: failure() && steps.responsive.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-test-results-${{ github.run_attempt }}
+          path: test/test-results/
+          if-no-files-found: ignore
+      - name: Add locality pages to the publication artifact
+        if: github.event_name != 'pull_request'
         run: |
-          npm ci --prefix test
-          npm run check --prefix test
-          npm run data --prefix test
-          npm run build --prefix test
           mkdir -p dist/test
           cp -a test/dist/. dist/test/
-        env:
-          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
         with:
           path: dist
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:

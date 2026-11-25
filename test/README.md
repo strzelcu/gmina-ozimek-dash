@@ -17,6 +17,30 @@ npm run preview --prefix test
 
 Adres podglądu kończy się na `/szczedrzyk/test/`. `PAGES_BASE_PATH=/` daje `/test/`. Krok `data` jest opcjonalny podczas pracy lokalnej. Zapisuje dane startowe w `test/public/data/`. Przeglądarka odświeża dane podczas otwierania strony, co godzinę i przy użyciu przycisku odświeżania. Każda sekcja ma własny stan błędu, a pamięć podręczna używa identyfikatora miejscowości i osobnych kluczy wersji testowej.
 
+## Testy układu
+
+```sh
+npm exec --prefix test -- playwright install --only-shell chromium
+npm run build --prefix test
+npm run test:responsive --prefix test
+```
+
+Playwright sprawdza katalog i wszystkie strony miejscowości w Chromium przy 42 szerokościach od 320 do 1920 px. Sprawdza progi z CSS oraz zmiany liczby kolumn w siatkach katalogu i czujników, w tym 1 px przed i po każdej granicy. Scenariusze obejmują nawigację, odświeżanie, przewijanie tabel, wykresy, rozwijane sekcje oraz ładowanie i niedostępność danych. Testy używają stałych odpowiedzi API i daty wybranej na podstawie harmonogramu z YAML.
+
+| Przejście do szerszego ekranu | Zmiana układu |
+| --- | --- |
+| 380 → 381 px | Odczyty PM oraz metryki słońca i pylenia przechodzą z jednej do dwóch kolumn. |
+| 420 → 421 px | Ikona w nagłówku rośnie z 36 do 44 px. |
+| 600 → 601 px | „Na dziś” i rodzaje odpadów przechodzą z jednej do dwóch kolumn. |
+| 640 → 641 px | Wodowskazy przechodzą z jednej do dwóch kolumn, pylenie z dwóch do czterech. Na wykresach pojawiają się dodatkowe etykiety osi. |
+| 760 → 761 px | Przycisk odświeżania i stopień ostrzeżenia przechodzą z układu pionowego na boczny. |
+| 900 → 901 px | „Na dziś” przechodzi z dwóch do czterech kolumn, rodzaje odpadów z dwóch do trzech. |
+| 1000 → 1001 px | Prognozy godzinowa i pięciodniowa ustawiają się obok siebie pod aktualną pogodą. |
+| 1100 → 1101 px | Sześć metryk pogody trafia do jednego wiersza. |
+| 1150 → 1151 px | Trzy wodowskazy mieszczą się w jednym wierszu. |
+
+GitHub Actions uruchamia te testy także w pull requestach do `main`. Jeśli test układu zakończy się błędem, w artefaktach przebiegu znajdziesz zrzuty ekranu i ślady Playwright.
+
 ## Źródła
 
 - **Geolokacja.** Pogoda, słońce, prognoza pylenia i odległości używają punktu z PRNG. Adres rekordu PRNG i kod SIMC są w YAML. [PRNG](https://www.geoportal.gov.pl/pl/dane/panstwowy-rejestr-nazw-geograficznych-prng/) · [Open-Meteo](https://open-meteo.com/)
@@ -26,4 +50,4 @@ Adres podglądu kończy się na `/szczedrzyk/test/`. `PAGES_BASE_PATH=/` daje `/
 
 ## Publikacja i wycofanie
 
-GitHub Actions dodaje `test/dist/` do publikowanego katalogu `dist/test/` po zbudowaniu wersji głównej. Aby wycofać całą wersję testową, wykonaj `git revert` commitu scalającego PR z tą wersją i opublikuj zmianę przez zwykły workflow Pages.
+GitHub Actions dodaje `test/dist/` do publikowanego katalogu `dist/test/` po zbudowaniu wersji głównej i przejściu testów. Błąd walidacji, testów jednostkowych lub testów układu blokuje publikację. Aby wycofać całą wersję testową, wykonaj `git revert` commitu scalającego PR z tą wersją i opublikuj zmianę przez zwykły workflow Pages.
