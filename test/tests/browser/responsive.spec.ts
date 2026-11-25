@@ -35,8 +35,8 @@ async function checkFooter(page: Page, locality?: Locality) {
   await expect(footer.getByRole("link", { name: "Punkt prognozy · PRNG" })).toHaveAttribute("href", locality?.position.sourceUrl
     ?? "https://www.geoportal.gov.pl/pl/dane/panstwowy-rejestr-nazw-geograficznych-prng/");
   await expect(footer.getByRole("link", { name: "Czujniki powietrza" })).toHaveAttribute("href", locality?.air.sourceUrls[0] ?? "https://panel.syngeos.pl/");
-  await expect(footer.getByRole("link", { name: "Zobacz repozytorium" })).toHaveAttribute("href", "https://github.com/strzelcu/szczedrzyk");
-  await expect(footer.getByRole("link", { name: "GitHub Issues" })).toHaveAttribute("href", "https://github.com/strzelcu/szczedrzyk/issues");
+  await expect(footer.getByRole("link", { name: "Zobacz repozytorium" })).toHaveAttribute("href", "https://github.com/strzelcu/gmina-ozimek-dash");
+  await expect(footer.getByRole("link", { name: "GitHub Issues" })).toHaveAttribute("href", "https://github.com/strzelcu/gmina-ozimek-dash/issues");
   await expect(footer.getByRole("link", { name: "mlody_analog3f@icloud.com" })).toHaveAttribute("href", "mailto:mlody_analog3f@icloud.com");
   await expect(footer.getByText("Dashboardy nie korzystają z narzędzi analitycznych, nie śledzą odwiedzin i nie zapisują historii Twojej aktywności na stronie.", { exact: true })).toBeVisible();
   await expect(footer.getByText("Strona została wygenerowana przez AI i może zawierać błędy.")).toBeVisible();
