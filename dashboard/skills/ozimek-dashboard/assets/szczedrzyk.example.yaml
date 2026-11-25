@@ -1,4 +1,4 @@
-# Minimalny przykład struktury. Zweryfikowane pomiary i terminy są w test/localities/szczedrzyk.yaml.
+# Minimalny przykład struktury. Zweryfikowane pomiary i terminy są w dashboard/localities/szczedrzyk.yaml.
 schemaVersion: 1
 slug: szczedrzyk
 name: Szczedrzyk

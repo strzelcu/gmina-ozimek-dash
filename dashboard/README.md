@@ -8,23 +8,23 @@ Uruchom polecenia z katalogu głównego repozytorium, używając Node.js 24.
 
 ```sh
 npm ci
-npm ci --prefix test
-npm run check --prefix test
-npm run data --prefix test
-npm run build --prefix test
-npm run preview --prefix test
+npm ci --prefix dashboard
+npm run check --prefix dashboard
+npm run data --prefix dashboard
+npm run build --prefix dashboard
+npm run preview --prefix dashboard
 ```
 
-Domyślny adres podglądu kończy się na `/gmina-ozimek/`. Ustaw `DASHBOARD_BASE_PATH`, aby sprawdzić inną ścieżkę. Użyj tej samej wartości przy kompilacji, podglądzie i testach. Krok `data` jest opcjonalny podczas pracy lokalnej. Zapisuje dane startowe w `test/public/data/`. Przeglądarka odświeża dane podczas otwierania strony, co godzinę i przy użyciu przycisku odświeżania. Każda sekcja ma własny stan błędu, a pamięć podręczna używa identyfikatora miejscowości.
+Domyślny adres podglądu kończy się na `/gmina-ozimek/`. Ustaw `DASHBOARD_BASE_PATH`, aby sprawdzić inną ścieżkę. Użyj tej samej wartości przy kompilacji, podglądzie i testach. Krok `data` jest opcjonalny podczas pracy lokalnej. Zapisuje dane startowe w `dashboard/public/data/`. Przeglądarka odświeża dane podczas otwierania strony, co godzinę i przy użyciu przycisku odświeżania. Każda sekcja ma własny stan błędu, a pamięć podręczna używa identyfikatora miejscowości.
 
 Dashboardy działają bez analityki i śledzenia odwiedzin. Przeglądarka zachowuje lokalnie dane źródłowe, w tym prognozy, ostrzeżenia i odczyty, aby móc je wyświetlić przy chwilowym braku połączenia. [Zgłoszenia w repozytorium](https://github.com/strzelcu/gmina-ozimek-dash/issues)
 
 ## Testy układu
 
 ```sh
-npm exec --prefix test -- playwright install --only-shell chromium
-npm run build --prefix test
-npm run test:responsive --prefix test
+npm exec --prefix dashboard -- playwright install --only-shell chromium
+npm run build --prefix dashboard
+npm run test:responsive --prefix dashboard
 ```
 
 Playwright sprawdza katalog i wszystkie strony miejscowości w Chromium przy 42 szerokościach od 320 do 1920 px. Sprawdza progi z CSS oraz zmiany liczby kolumn w siatkach katalogu i czujników, w tym 1 px przed i po każdej granicy. Scenariusze obejmują nawigację, odświeżanie, przewijanie tabel, wykresy, rozwijane sekcje oraz ładowanie i niedostępność danych. Testy używają stałych odpowiedzi API i daty wybranej na podstawie harmonogramu z YAML.
@@ -52,4 +52,4 @@ GitHub Actions uruchamia te testy także w pull requestach do `main`. Jeśli tes
 
 ## Publikacja i wycofanie
 
-Workflow głównej witryny `strzelcu/strzelcu.github.io` buduje wskazany commit `strzelcu/gmina-ozimek-dash`, dołącza `test/dist/` jako `out/gmina-ozimek/` i publikuje przekierowanie z `/szczedrzyk/`. Błąd walidacji, testów jednostkowych lub testów układu blokuje wdrożenie. Aby wydać kolejną wersję lub ją cofnąć, zaktualizuj SHA źródła w workflow głównej witryny albo cofnij commit zmieniający tę wartość. [Workflow głównej witryny](https://github.com/strzelcu/strzelcu.github.io/blob/main/.github/workflows/pages.yml)
+Workflow głównej witryny `strzelcu/strzelcu.github.io` buduje wskazany commit `strzelcu/gmina-ozimek-dash`, dołącza `dashboard/dist/` jako `out/gmina-ozimek/` i publikuje przekierowanie z `/szczedrzyk/`. Błąd walidacji, testów jednostkowych lub testów układu blokuje wdrożenie. Aby wydać kolejną wersję lub ją cofnąć, zaktualizuj SHA źródła w workflow głównej witryny albo cofnij commit zmieniający tę wartość. [Workflow głównej witryny](https://github.com/strzelcu/strzelcu.github.io/blob/main/.github/workflows/pages.yml)

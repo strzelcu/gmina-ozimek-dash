@@ -8,10 +8,10 @@ The dashboards run without visitor analytics or activity tracking. The browser s
 
 | Path | Purpose |
 | --- | --- |
-| `test/localities/` | One YAML configuration per locality |
-| `test/src/` | Shared catalogue, dashboard and footer components |
-| `test/tests/` | Locality checks and Playwright tests |
-| `test/skills/ozimek-dashboard/` | Instructions, schema and example for adding a locality |
+| `dashboard/localities/` | One YAML configuration per locality |
+| `dashboard/src/` | Shared catalogue, dashboard and footer components |
+| `dashboard/tests/` | Locality checks and Playwright tests |
+| `dashboard/skills/ozimek-dashboard/` | Instructions, schema and example for adding a locality |
 | `redirect/index.html` | Redirect to the published Szczedrzyk dashboard |
 | `src/` | Source of the original standalone Szczedrzyk page |
 
@@ -21,13 +21,13 @@ Run these commands with Node.js 24 from the repository root.
 
 ```sh
 npm ci
-npm ci --prefix test
-npm run check --prefix test
-npm run build --prefix test
-npm run preview --prefix test
+npm ci --prefix dashboard
+npm run check --prefix dashboard
+npm run build --prefix dashboard
+npm run preview --prefix dashboard
 ```
 
-The preview uses `/gmina-ozimek/` by default. Set `DASHBOARD_BASE_PATH` to use a different prefix for the build, preview and browser tests. Run `npm run data --prefix test` to fetch optional starting data for local development. [Dashboard guide and test commands](test/README.md) · [Instructions for adding a locality](test/skills/ozimek-dashboard/SKILL.md)
+The preview uses `/gmina-ozimek/` by default. Set `DASHBOARD_BASE_PATH` to use a different prefix for the build, preview and browser tests. Run `npm run data --prefix dashboard` to fetch optional starting data for local development. [Dashboard guide and test commands](dashboard/README.md) · [Instructions for adding a locality](dashboard/skills/ozimek-dashboard/SKILL.md)
 
 ## Publishing
 

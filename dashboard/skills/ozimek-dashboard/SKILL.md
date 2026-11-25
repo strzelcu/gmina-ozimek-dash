@@ -5,7 +5,7 @@ description: Dodawaj i odtwarzaj dashboardy polskich miejscowości z YAML. Stosu
 
 # Odtwarzanie dashboardu miejscowości
 
-Użyj wspólnego szablonu i dodaj dla każdej miejscowości jeden plik `test/localities/<slug>.yaml`. Kompilacja wczytuje te pliki automatycznie, tworzy katalog i generuje bezpośrednie adresy `/gmina-ozimek/<slug>/`. Pracuj na osobnej gałęzi. Bieżący zakres publikacji obejmuje Ozimek i 13 sołectw. Do próby z inną miejscowością użyj osobnej kopii roboczej, a jej konfigurację dodaj do publikowanego katalogu po uzgodnieniu zakresu.
+Użyj wspólnego szablonu i dodaj dla każdej miejscowości jeden plik `dashboard/localities/<slug>.yaml`. Kompilacja wczytuje te pliki automatycznie, tworzy katalog i generuje bezpośrednie adresy `/gmina-ozimek/<slug>/`. Pracuj na osobnej gałęzi. Bieżący zakres publikacji obejmuje Ozimek i 13 sołectw. Do próby z inną miejscowością użyj osobnej kopii roboczej, a jej konfigurację dodaj do publikowanego katalogu po uzgodnieniu zakresu.
 
 ## Zweryfikuj dane i uzupełnij YAML
 
@@ -22,31 +22,31 @@ Skopiuj [przykład](assets/szczedrzyk.example.yaml) i uzupełnij pola zgodnie ze
 - Kafelek „Na dziś” pokazuje wszystkie odbiory od dziś do siódmego dnia włącznie, również dla kilku rejonów. Daty wyświetla w strefie `Europe/Warsaw`. Temperaturę zaokrągloną do zera wyświetla jako `0°C`.
 - Przy czujniku spoza miejscowości etykieta „Spoza miejscowości” jest po prawej stronie nazwy. Adres ma osobny wiersz i może się zawijać. Starsze odczyty i chwilowe braki danych mają oznaczenia przy urządzeniu.
 - Kafelek wód pokazuje wodowskaz z potwierdzonym poziomem i poprawną datą pomiaru. Cieki bez takich odczytów pomija. Gdy brak wszystkich odczytów, kafelek znika po zakończeniu ładowania.
-- W katalogu rodzaj z YAML dobiera ikonę budynków dla miasta albo ikonę domu dla sołectwa. Katalog i dashboardy korzystają z `test/src/components/DashboardFooter.tsx`. Stopka zawiera źródła danych, link do repozytorium, GitHub Issues, e-mail do zgłoszeń oraz informacje o braku śledzenia i wygenerowaniu strony przez AI. Linki do czujników i PRNG na dashboardzie wskazują źródła danej miejscowości.
+- W katalogu rodzaj z YAML dobiera ikonę budynków dla miasta albo ikonę domu dla sołectwa. Katalog i dashboardy korzystają z `dashboard/src/components/DashboardFooter.tsx`. Stopka zawiera źródła danych, link do repozytorium, GitHub Issues, e-mail do zgłoszeń oraz informacje o braku śledzenia i wygenerowaniu strony przez AI. Linki do czujników i PRNG na dashboardzie wskazują źródła danej miejscowości.
 
 ## Przejdź cały workflow
 
-Uruchom poniższe polecenia z katalogu głównego repozytorium w Node.js 24. Do sprawdzenia samego układu użyj stałych odpowiedzi API w testach Playwright. `npm run data --prefix test` pobiera rzeczywiste dane startowe, a ostrzeżenia o niedostępnych źródłach wskazują pliki wymagające sprawdzenia.
+Uruchom poniższe polecenia z katalogu głównego repozytorium w Node.js 24. Do sprawdzenia samego układu użyj stałych odpowiedzi API w testach Playwright. `npm run data --prefix dashboard` pobiera rzeczywiste dane startowe, a ostrzeżenia o niedostępnych źródłach wskazują pliki wymagające sprawdzenia.
 
 ```sh
 npm ci
-npm ci --prefix test
+npm ci --prefix dashboard
 node --test tests/*.test.ts
-npm run check --prefix test
-npm run data --prefix test
-npm run build --prefix test
-npm exec --prefix test -- playwright install --only-shell chromium
-npm run test:responsive --prefix test
+npm run check --prefix dashboard
+npm run data --prefix dashboard
+npm run build --prefix dashboard
+npm exec --prefix dashboard -- playwright install --only-shell chromium
+npm run test:responsive --prefix dashboard
 ```
 
-1. Otwórz podgląd przez `npm run preview --prefix test`. Domyślna ścieżka to `/gmina-ozimek/`. Jeśli ustawiasz `DASHBOARD_BASE_PATH`, użyj tej samej wartości do kompilacji, podglądu i testów. Sprawdź wpis w katalogu, bezpośredni adres dashboardu i zgodność jego danych z YAML. Zweryfikuj linki źródłowe, odczyty bieżące i stany braku danych.
-2. Sprawdź wersję mobilną i szeroką. Testy Chromium obejmują wszystkie pliki YAML, karty, stopkę, kontrolki i przewijanie oraz szerokości po obu stronach breakpointów. Przy zmianie progów uzupełnij macierz w `test/tests/browser/layout.ts`. [Tabela breakpointów i polecenia](../../README.md#testy-układu)
-3. Umieść konfigurację i związane z nią poprawki w odwracalnym PR do `main`. Przejrzyj zmiany w `test/localities/` i zaczekaj na walidację, testy jednostkowe oraz testy układu.
+1. Otwórz podgląd przez `npm run preview --prefix dashboard`. Domyślna ścieżka to `/gmina-ozimek/`. Jeśli ustawiasz `DASHBOARD_BASE_PATH`, użyj tej samej wartości do kompilacji, podglądu i testów. Sprawdź wpis w katalogu, bezpośredni adres dashboardu i zgodność jego danych z YAML. Zweryfikuj linki źródłowe, odczyty bieżące i stany braku danych.
+2. Sprawdź wersję mobilną i szeroką. Testy Chromium obejmują wszystkie pliki YAML, karty, stopkę, kontrolki i przewijanie oraz szerokości po obu stronach breakpointów. Przy zmianie progów uzupełnij macierz w `dashboard/tests/browser/layout.ts`. [Tabela breakpointów i polecenia](../../README.md#testy-układu)
+3. Umieść konfigurację i związane z nią poprawki w odwracalnym PR do `main`. Przejrzyj zmiany w `dashboard/localities/` i zaczekaj na walidację, testy jednostkowe oraz testy układu.
 4. Po scaleniu zaktualizuj SHA źródła `strzelcu/gmina-ozimek-dash` w workflow repozytorium `strzelcu/strzelcu.github.io`. Workflow uruchamia te same testy przed publikacją i zapisuje raport Playwright, jeśli test układu zakończy się błędem. Błąd zatrzymuje wdrożenie.
 5. Sprawdź wynik `build` i `deploy` oraz otwórz opublikowany katalog i nowy dashboard. Potwierdź ścieżki zasobów i plików danych. Cofnięcie commitu zmieniającego SHA w głównej witrynie publikuje poprzednią kompilację.
 
 ## Skopiuj wzorzec do innej gminy
 
-1. Przenieś `test/` razem ze schematem, przykładem i skryptami. Zachowaj zależności z głównego `package.json` i bramkę testów w workflow Pages. Ustaw pełną ścieżkę aplikacji w `DASHBOARD_BASE_PATH`, np. `/nowa-gmina/` albo `/` dla strony głównej domeny.
-2. Dopasuj nagłówek i katalog w `test/src/Header.tsx`, `test/src/Directory.tsx` i `test/index.html`. Zaktualizuj repozytorium i logo w `DashboardFooter.tsx`, a kontakt w `FeedbackContact.tsx`. Dostosuj oczekiwane nazwy i adresy w `test/tests/browser/responsive.spec.ts` do tych ustawień.
+1. Przenieś `dashboard/` razem ze schematem, przykładem i skryptami. Zachowaj zależności z głównego `package.json` i bramkę testów w workflow Pages. Ustaw pełną ścieżkę aplikacji w `DASHBOARD_BASE_PATH`, np. `/nowa-gmina/` albo `/` dla strony głównej domeny.
+2. Dopasuj nagłówek i katalog w `dashboard/src/Header.tsx`, `dashboard/src/Directory.tsx` i `dashboard/index.html`. Zaktualizuj repozytorium i logo w `DashboardFooter.tsx`, a kontakt w `FeedbackContact.tsx`. Dostosuj oczekiwane nazwy i adresy w `dashboard/tests/browser/responsive.spec.ts` do tych ustawień.
 3. Zastąp konfiguracje Ozimka potwierdzonymi YAML-ami nowej gminy i zaktualizuj testy jednostkowe odwołujące się do konkretnych stacji i harmonogramów Ozimka. Testy układu dobierają dashboardy z aktualnych YAML-ów i obsługują puste listy czujników, wodowskazów i harmonogramów.
