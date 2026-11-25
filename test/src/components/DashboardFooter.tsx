@@ -19,6 +19,7 @@ export default function DashboardFooter({ locality }: { locality?: Locality }) {
     <p className="attribution">Kod strony jest publicznie dostępny na portalu GitHub. <SourceLink href="https://github.com/strzelcu/szczedrzyk">Zobacz repozytorium</SourceLink></p>
     <FeedbackContact />
     <p className="attribution">Dane Instytutu Meteorologii i Gospodarki Wodnej – Państwowego Instytutu Badawczego zostały przetworzone. Dane operacyjne mogą podlegać korektom.</p>
+    <p className="attribution">Dashboardy nie korzystają z narzędzi analitycznych, nie śledzą odwiedzin i nie zapisują historii Twojej aktywności na stronie.</p>
     <p className="attribution">Strona została wygenerowana przez AI i może zawierać błędy.</p>
     <p className="footer-brand w-full text-center">
       <a href="https://strzelcu.github.io/" className="inline-flex items-center gap-3 text-lg underline underline-offset-2">

@@ -38,6 +38,7 @@ async function checkFooter(page: Page, locality?: Locality) {
   await expect(footer.getByRole("link", { name: "Zobacz repozytorium" })).toHaveAttribute("href", "https://github.com/strzelcu/szczedrzyk");
   await expect(footer.getByRole("link", { name: "GitHub Issues" })).toHaveAttribute("href", "https://github.com/strzelcu/szczedrzyk/issues");
   await expect(footer.getByRole("link", { name: "mlody_analog3f@icloud.com" })).toHaveAttribute("href", "mailto:mlody_analog3f@icloud.com");
+  await expect(footer.getByText("Dashboardy nie korzystają z narzędzi analitycznych, nie śledzą odwiedzin i nie zapisują historii Twojej aktywności na stronie.", { exact: true })).toBeVisible();
   await expect(footer.getByText("Strona została wygenerowana przez AI i może zawierać błędy.")).toBeVisible();
   const brand = footer.getByRole("link", { name: "Programista na wsi" });
   await expect(brand).toHaveAttribute("href", "https://strzelcu.github.io/");
