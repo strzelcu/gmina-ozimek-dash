@@ -1,4 +1,4 @@
-name: Update data and publish dashboard
+name: Check dashboards and publish legacy redirect
 on:
   push:
     branches: [main]
@@ -19,7 +19,6 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-      pages: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,39 +34,7 @@ jobs:
         run: |
           node --test tests/*.test.ts
           npm run check --prefix test
-      - name: Restore last available measurements
-        if: github.event_name != 'pull_request'
-        uses: actions/cache/restore@v4
-        with:
-          path: .data-cache
-          key: measurements-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: measurements-
-      - name: Fetch public data
-        if: github.event_name != 'pull_request'
-        run: |
-          npm run data
-          npm run data --prefix test
-      - name: Save last available measurements
-        if: github.event_name != 'pull_request'
-        uses: actions/cache/save@v4
-        with:
-          path: .data-cache
-          key: measurements-${{ github.run_id }}-${{ github.run_attempt }}
-      - name: Configure Pages
-        if: github.event_name != 'pull_request'
-        id: pages
-        uses: actions/configure-pages@v5
-      - name: Set Pages base path
-        env:
-          BASE_PATH: ${{ github.event_name == 'pull_request' && format('/{0}', github.event.repository.name) || steps.pages.outputs.base_path }}
-        run: |
-          echo "PAGES_BASE_PATH=${BASE_PATH}/" >> "$GITHUB_ENV"
-          if [[ "$GITHUB_EVENT_NAME" != "pull_request" ]]; then
-            echo "DASHBOARD_BASE_PATH=${BASE_PATH}/test/" >> "$GITHUB_ENV"
-          fi
-      - name: Build static dashboard
-        run: npm run build
-      - name: Build locality dashboards under /test
+      - name: Build official locality dashboards
         run: npm run build --prefix test
       - name: Install Chromium for Playwright
         working-directory: test
@@ -82,15 +49,10 @@ jobs:
           name: responsive-test-results-${{ github.run_attempt }}
           path: test/test-results/
           if-no-files-found: ignore
-      - name: Add locality pages to the publication artifact
-        if: github.event_name != 'pull_request'
-        run: |
-          mkdir -p dist/test
-          cp -a test/dist/. dist/test/
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'
         with:
-          path: dist
+          path: redirect
   deploy:
     if: github.event_name != 'pull_request'
     needs: build
