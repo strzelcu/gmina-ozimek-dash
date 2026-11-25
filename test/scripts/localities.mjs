@@ -23,6 +23,7 @@ function unique(values, label, fileName) {
   if (new Set(values).size !== values.length) throw Error(`${fileName}: powtarzające się ${label}`);
 }
 
+/** @returns {import("../src/lib/locality.ts").Locality} */
 export function checkLocality(contents, fileName) {
   const document = parseDocument(contents);
   if (document.errors.length) throw Error(`${fileName}: ${document.errors[0].message}`);
