@@ -59,8 +59,17 @@ export default function AirHistory({sensor, refreshToken}: {sensor: AirSensor; r
  const range = points.length ? points.map(p => date(p.time)).filter((d,i,a) => a.indexOf(d)===i).map(d=>d.split("-").reverse().join(".")).join(" – ") : "";
  const max = Math.max(10, ...points.flatMap(p => [p.pm25 ?? 0,p.pm10 ?? 0]));
  const ceiling = Math.ceil(max * 1.1 / 10) * 10;
- const x = (i: number) => 48 + (Date.parse(points[i].time)-Date.parse(points[0].time))*680 / Math.max(1,Date.parse(points[points.length-1].time)-Date.parse(points[0].time));
- const y = (v: number) => 210 - v * 170 / ceiling;
+ const left = 82, right = 720;
+ const x = (i: number) => left + (Date.parse(points[i].time)-Date.parse(points[0].time))*(right-left) / Math.max(1,Date.parse(points[points.length-1].time)-Date.parse(points[0].time));
+ const y = (v: number) => 198 - v * 158 / ceiling;
+ const lastPoint = points.length - 1;
+ const timeTicks = points.flatMap((point, index) => {
+  if (index === lastPoint) return [{ point, index, secondary: false }];
+  const secondary = index % 6 !== 0;
+  // Leave room for the last label even with a short or interrupted series.
+  return index % 3 === 0 && x(lastPoint) - x(index) >= (secondary ? 60 : 80)
+   ? [{ point, index, secondary }] : [];
+ });
  function path(field: "pm25" | "pm10") {
   let drawing = false;
   let previous = 0;
@@ -74,8 +83,8 @@ export default function AirHistory({sensor, refreshToken}: {sensor: AirSensor; r
    <div className="chart-legend"><span className="legend-pm25">PM2,5</span><span className="legend-pm10">PM10</span><span>µg/m³ · {range}</span></div>
    <svg className="air-chart" viewBox="0 0 760 250" role="img" aria-labelledby="air-chart-title air-chart-desc">
     <title id="air-chart-title">Historia godzinowych stężeń pyłów z czujnika Syngeos</title><desc id="air-chart-desc">Oś pozioma: godziny czasu polskiego. Oś pionowa: stężenie w mikrogramach na metr sześcienny. Dokładne wartości dostępne w tabeli pod wykresem.</desc>
-    {[0,1,2,3,4].map(i => {const n=ceiling*i/4;return <g key={i}><line x1="48" x2="728" y1={y(n)} y2={y(n)} stroke="#d9e3ed"/><text className={i%2===1?"chart-tick-secondary":undefined} x="46" y={y(n)+4} textAnchor="end">{value(n)}</text></g>;})}
-    {points.map((p,i) => i%3===0 || i===points.length-1 ? <text className={i%6!==0&&i!==points.length-1?"chart-tick-secondary":undefined} key={p.time} x={x(i)} y="236" textAnchor="middle">{hour(p.time)}</text> : null)}
+    {[0,1,2,3,4].map(i => {const n=ceiling*i/4;return <g key={i}><line x1={left} x2={right} y1={y(n)} y2={y(n)} stroke="#d9e3ed"/><text className={i%2===1?"chart-tick-secondary":undefined} x={left-8} y={y(n)+4} textAnchor="end">{value(n)}</text></g>;})}
+    {timeTicks.map(({ point, index, secondary }) => <text className={secondary?"chart-tick-secondary":undefined} key={point.time} x={x(index)} y="236" textAnchor="middle">{hour(point.time)}</text>)}
     <path d={path("pm25")} fill="none" stroke="#147d75" strokeWidth="3"/><path d={path("pm10")} fill="none" stroke="#a15b19" strokeWidth="3" strokeDasharray="7 4"/>
     {points.map((p,i) => <g key={p.time}>{p.pm25!==null&&<circle cx={x(i)} cy={y(p.pm25)} r="3" fill="#147d75"><title>{hour(p.time)} · PM2,5: {value(p.pm25)} µg/m³</title></circle>}{p.pm10!==null&&<circle cx={x(i)} cy={y(p.pm10)} r="3" fill="#a15b19"><title>{hour(p.time)} · PM10: {value(p.pm10)} µg/m³</title></circle>}</g>)}
    </svg>
