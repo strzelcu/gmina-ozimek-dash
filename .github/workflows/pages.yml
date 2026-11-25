@@ -60,7 +60,11 @@ jobs:
       - name: Set Pages base path
         env:
           BASE_PATH: ${{ github.event_name == 'pull_request' && format('/{0}', github.event.repository.name) || steps.pages.outputs.base_path }}
-        run: echo "PAGES_BASE_PATH=${BASE_PATH}/" >> "$GITHUB_ENV"
+        run: |
+          echo "PAGES_BASE_PATH=${BASE_PATH}/" >> "$GITHUB_ENV"
+          if [[ "$GITHUB_EVENT_NAME" != "pull_request" ]]; then
+            echo "DASHBOARD_BASE_PATH=${BASE_PATH}/test/" >> "$GITHUB_ENV"
+          fi
       - name: Build static dashboard
         run: npm run build
       - name: Build locality dashboards under /test

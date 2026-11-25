@@ -47,6 +47,7 @@ async function checkFooter(page: Page, locality?: Locality) {
 test("katalog miejscowości przy każdej szerokości", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByRole("heading", { level: 1, name: "Dashboardy miejscowości" })).toBeVisible();
+  await expect(page.getByText("Wersja testowa", { exact: true })).toHaveCount(0);
   const navigation = page.getByRole("navigation", { name: "Miejscowości gminy Ozimek" });
   await expect(navigation.getByRole("link")).toHaveCount(localities.length);
   for (const locality of localities) {
@@ -55,7 +56,6 @@ test("katalog miejscowości przy każdej szerokości", async ({ page }) => {
     const icon = locality.kind === "city" ? "building-2" : "house";
     await expect(link.locator(`svg.lucide-${icon}`)).toHaveAttribute("aria-hidden", "true");
   }
-  await expect(page.getByRole("link", { name: "Dashboard Szczedrzyka · wersja główna" })).toHaveAttribute("href", new URL("../", page.url()).pathname);
   await checkFooter(page);
   for (const width of widths) await test.step(`${width} px`, () => checkLayout(page, width));
 });

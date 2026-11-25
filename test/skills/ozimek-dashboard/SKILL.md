@@ -1,11 +1,11 @@
 ---
 name: ozimek-dashboard
-description: Dodawaj i odtwarzaj dashboardy polskich miejscowości z YAML pod /test/. Stosuj do weryfikacji źródeł, tworzenia konfiguracji, sprawdzania układu i publikowania przez GitHub Pages.
+description: Dodawaj i odtwarzaj dashboardy polskich miejscowości z YAML. Stosuj do weryfikacji źródeł, tworzenia konfiguracji, sprawdzania układu i publikowania przez GitHub Pages.
 ---
 
 # Odtwarzanie dashboardu miejscowości
 
-Użyj wspólnego szablonu i dodaj dla każdej miejscowości jeden plik `test/localities/<slug>.yaml`. Kompilacja wczytuje te pliki automatycznie, tworzy katalog i generuje bezpośrednie adresy `/test/<slug>/`. Pracuj na osobnej gałęzi. Bieżący zakres publikacji obejmuje Ozimek i 13 sołectw. Do próby z inną miejscowością użyj osobnej kopii roboczej, a jej konfigurację dodaj do publikowanego katalogu po uzgodnieniu zakresu.
+Użyj wspólnego szablonu i dodaj dla każdej miejscowości jeden plik `test/localities/<slug>.yaml`. Kompilacja wczytuje te pliki automatycznie, tworzy katalog i generuje bezpośrednie adresy `/gmina-ozimek/<slug>/`. Pracuj na osobnej gałęzi. Bieżący zakres publikacji obejmuje Ozimek i 13 sołectw. Do próby z inną miejscowością użyj osobnej kopii roboczej, a jej konfigurację dodaj do publikowanego katalogu po uzgodnieniu zakresu.
 
 ## Zweryfikuj dane i uzupełnij YAML
 
@@ -33,21 +33,20 @@ npm ci
 npm ci --prefix test
 node --test tests/*.test.ts
 npm run check --prefix test
-npm run data
 npm run data --prefix test
-npm run build
 npm run build --prefix test
 npm exec --prefix test -- playwright install --only-shell chromium
 npm run test:responsive --prefix test
 ```
 
-1. Otwórz podgląd przez `npm run preview --prefix test`. Przy domyślnych ustawieniach ścieżka to `/szczedrzyk/test/`. Jeśli ustawiasz `PAGES_BASE_PATH`, użyj tej samej wartości do kompilacji, podglądu i testów. Sprawdź wpis w katalogu, bezpośredni adres dashboardu i zgodność jego danych z YAML. Zweryfikuj linki źródłowe, odczyty bieżące i stany braku danych.
+1. Otwórz podgląd przez `npm run preview --prefix test`. Domyślna ścieżka to `/gmina-ozimek/`. Jeśli ustawiasz `DASHBOARD_BASE_PATH`, użyj tej samej wartości do kompilacji, podglądu i testów. Sprawdź wpis w katalogu, bezpośredni adres dashboardu i zgodność jego danych z YAML. Zweryfikuj linki źródłowe, odczyty bieżące i stany braku danych.
 2. Sprawdź wersję mobilną i szeroką. Testy Chromium obejmują wszystkie pliki YAML, karty, stopkę, kontrolki i przewijanie oraz szerokości po obu stronach breakpointów. Przy zmianie progów uzupełnij macierz w `test/tests/browser/layout.ts`. [Tabela breakpointów i polecenia](../../README.md#testy-układu)
-3. Umieść konfigurację i związane z nią poprawki w odwracalnym PR do `main`. Przejrzyj zmiany w `test/localities/` i zaczekaj na walidację, testy jednostkowe oraz testy układu. Workflow Pages uruchamia je w PR i ponownie po scaleniu. Błąd zatrzymuje publikację, a przebieg zapisuje wyniki błędnych testów przeglądarkowych.
-4. Po scaleniu sprawdź powodzenie `build` i `deploy` w GitHub Actions. Otwórz wdrożony katalog, nowy dashboard i wersję główną. Potwierdź, że ścieżki statycznych zasobów i plików danych prowadzą do odpowiedniej wersji. Aby wycofać zmianę, użyj `git revert` na commicie scalającym i przeprowadź ponowną publikację.
+3. Umieść konfigurację i związane z nią poprawki w odwracalnym PR do `main`. Przejrzyj zmiany w `test/localities/` i zaczekaj na walidację, testy jednostkowe oraz testy układu.
+4. Po scaleniu zaktualizuj SHA źródła w workflow repozytorium `strzelcu/strzelcu.github.io`. Workflow uruchamia te same testy przed publikacją i zapisuje raport Playwright, jeśli test układu zakończy się błędem. Błąd zatrzymuje wdrożenie.
+5. Sprawdź wynik `build` i `deploy` oraz otwórz opublikowany katalog i nowy dashboard. Potwierdź ścieżki zasobów i plików danych. Cofnięcie commitu zmieniającego SHA w głównej witrynie publikuje poprzednią kompilację.
 
 ## Skopiuj wzorzec do innej gminy
 
-1. Przenieś `test/` razem ze schematem, przykładem i skryptami. Zachowaj zależności z głównego `package.json` i bramkę testów w workflow Pages. Ustaw `PAGES_BASE_PATH` na ścieżkę bazową nowego repozytorium, np. `/nowe-repo/`, albo na `/` dla domeny głównej.
-2. Dopasuj nagłówek i katalog w `test/src/Header.tsx`, `test/src/Directory.tsx` i `test/index.html`. Zaktualizuj link powrotny, repozytorium i logo w `DashboardFooter.tsx`, a kontakt w `FeedbackContact.tsx`. Dostosuj oczekiwane nazwy i adresy w `test/tests/browser/responsive.spec.ts` do tych ustawień.
+1. Przenieś `test/` razem ze schematem, przykładem i skryptami. Zachowaj zależności z głównego `package.json` i bramkę testów w workflow Pages. Ustaw pełną ścieżkę aplikacji w `DASHBOARD_BASE_PATH`, np. `/nowa-gmina/` albo `/` dla strony głównej domeny.
+2. Dopasuj nagłówek i katalog w `test/src/Header.tsx`, `test/src/Directory.tsx` i `test/index.html`. Zaktualizuj repozytorium i logo w `DashboardFooter.tsx`, a kontakt w `FeedbackContact.tsx`. Dostosuj oczekiwane nazwy i adresy w `test/tests/browser/responsive.spec.ts` do tych ustawień.
 3. Zastąp konfiguracje Ozimka potwierdzonymi YAML-ami nowej gminy i zaktualizuj testy jednostkowe odwołujące się do konkretnych stacji i harmonogramów Ozimka. Testy układu dobierają dashboardy z aktualnych YAML-ów i obsługują puste listy czujników, wodowskazów i harmonogramów.

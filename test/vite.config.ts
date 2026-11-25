@@ -3,14 +3,14 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/postcss";
 import { readLocalities, localityDirectory } from "./scripts/localities.mjs";
+import { dashboardBasePath } from "./scripts/dashboard-path.mjs";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
-const repositoryBase = (process.env.PAGES_BASE_PATH ?? "/szczedrzyk/").replace(/\/+$/, "");
 const localitiesModule = "virtual:ozimek-localities";
 
 export default defineConfig({
   root,
-  base: `${repositoryBase}/test/`,
+  base: dashboardBasePath,
   plugins: [
     react(),
     {

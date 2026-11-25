@@ -1,7 +1,7 @@
 import { defineConfig } from "@playwright/test";
+import { dashboardBasePath } from "./scripts/dashboard-path.mjs";
 
-const repositoryBase = (process.env.PAGES_BASE_PATH ?? "/szczedrzyk/").replace(/\/+$/, "");
-const baseURL = `http://127.0.0.1:4173${repositoryBase}/test/`;
+const baseURL = `http://127.0.0.1:4173${dashboardBasePath}`;
 
 export default defineConfig({
   testDir: "./tests/browser",
