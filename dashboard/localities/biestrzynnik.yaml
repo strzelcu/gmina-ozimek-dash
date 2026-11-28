@@ -74,7 +74,7 @@ water:
           longitude: 18.3425
           note: Odcinek Małej Panwi w górę rzeki od gminy Ozimek
 waste:
-  sourceUrl: https://ozimek.pl/229-ochrona-srodowiska/32282-harmonogram-wywozu-odpadow.html
+  sourceUrl: https://ozimek.pl/50229-ochrona-srodowiska-50229/32282-harmonogram-wywozu-odpadow-32282.html
   schedules:
     - region: '10'
       coverage: Biestrzynnik

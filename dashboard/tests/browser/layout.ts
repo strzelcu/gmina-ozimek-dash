@@ -75,6 +75,11 @@ export async function checkLayout(page: Page, width: number) {
     }
     for (const grid of document.querySelectorAll(".water-grid")) columns(grid, ":scope > article", width <= 640 ? 1 : width <= 1150 ? 2 : flowColumns(grid, 280, 24));
     for (const grid of document.querySelectorAll(".waste-fractions")) columns(grid, ":scope > li", width <= 600 ? 1 : width <= 900 ? 2 : 3);
+    for (const list of document.querySelectorAll(".waste-pickup-fractions")) {
+      const rows = Array.from(list.children, item => item.getBoundingClientRect());
+      check(rows.every((row, index) => index === 0 || row.top >= rows[index - 1].bottom - tolerance),
+        "Każda frakcja w ramach jednego odbioru musi mieć osobny wiersz");
+    }
 
     const icon = document.querySelector(".brand-icon")!.getBoundingClientRect();
     check(Math.abs(icon.width - (width <= 420 ? 36 : 44)) <= tolerance, "Ikona nagłówka ma niewłaściwy rozmiar");

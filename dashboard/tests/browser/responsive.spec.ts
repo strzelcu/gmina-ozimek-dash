@@ -110,16 +110,18 @@ for (const locality of localities) {
     const today = date(0);
     const last = date(7);
     const schedules = locality.waste.schedules.filter(schedule => today >= schedule.validFrom && today <= schedule.validUntil);
+    const byDate = (a: { date: string }, b: { date: string }) => a.date.localeCompare(b.date);
     const pickups = locality.waste.schedules.flatMap(schedule => schedule.collections
-      .filter(entry => today <= entry.date && entry.date <= last));
-    const dates = pickups.map(entry => entry.date).sort();
-    for (const selector of [".summary-waste time", ".waste-next time"]) {
-      expect(await page.locator(selector).evaluateAll(nodes => nodes.map(node => node.getAttribute("datetime")).sort())).toEqual(dates);
+      .filter(entry => today <= entry.date && entry.date <= last)
+      .map(entry => ({ date: entry.date, fractions: entry.fractions.map(wasteFractionLabel) }))).sort(byDate);
+    for (const selector of [".summary-waste > ul > li", ".waste-next"]) {
+      const displayed = await page.locator(selector).evaluateAll(cards => cards.map(card => ({
+        date: card.querySelector("time")?.dateTime ?? "",
+        fractions: Array.from(card.querySelectorAll(".waste-pickup-fractions > li"), item => item.textContent),
+      })));
+      expect(displayed.sort(byDate)).toEqual(pickups);
     }
-    const labels = pickups.map(entry => entry.fractions.map(wasteFractionLabel).join(" · ")).sort();
-    for (const selector of [".summary-waste li small", ".waste-next p"]) {
-      expect((await page.locator(selector).allTextContents()).sort()).toEqual(labels);
-    }
+    await expect(page.getByRole("link", { name: "Wykaz gminy", exact: true })).toHaveAttribute("href", locality.waste.sourceUrl);
     await expect(page.locator(".waste-fractions > li")).toHaveCount(6 * schedules.length);
     await expect(page.locator(".waste-fraction-icon")).toHaveText(schedules.flatMap(() => Object.values(fractionEmoji)));
     const downloads = locality.waste.schedules.filter(schedule => today <= schedule.validUntil);

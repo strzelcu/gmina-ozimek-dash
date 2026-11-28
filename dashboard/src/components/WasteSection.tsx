@@ -20,6 +20,12 @@ export function useWasteDay() {
 
 type WasteWeek = ReturnType<typeof wasteScheduleWeeks>[number];
 
+export function WastePickupFractions({ pickupFractions }: { pickupFractions: readonly Fraction[] }) {
+  return <ul className="waste-pickup-fractions" role="list">
+    {pickupFractions.map(fraction => <li key={fraction}>{wasteFractionLabel(fraction)}</li>)}
+  </ul>;
+}
+
 function Schedule({ week, today }: { week: WasteWeek; today: string }) {
   const { schedule, active, collections: reminders } = week;
   const upcoming = upcomingCollections(schedule, today);
@@ -33,7 +39,7 @@ function Schedule({ week, today }: { week: WasteWeek; today: string }) {
       {reminders.map(entry => <div className="waste-next" key={entry.date}><div>
         <span className="pill good">{relativeDay(entry.date, today)}</span>
         <h4><time dateTime={entry.date}>{formatWasteDate(entry.date)}</time></h4>
-        <p>{entry.fractions.map(wasteFractionLabel).join(" · ")}</p>
+        <WastePickupFractions pickupFractions={entry.fractions} />
       </div></div>)}
       {!reminders.length && <p className="section-message">Brak wywozów w ciągu najbliższych 7 dni.</p>}
     </>}
