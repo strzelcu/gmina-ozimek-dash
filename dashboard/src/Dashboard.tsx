@@ -12,7 +12,7 @@ import EnvironmentExtras, { pollenPlants, usePollenForecast } from "./components
 import DashboardFooter from "./components/DashboardFooter";
 import Source from "./components/SourceLink";
 import WasteSection, { formatWasteDate, useWasteDay } from "./components/WasteSection";
-import { fractions, relativeDay, wasteScheduleWeeks } from "./lib/waste";
+import { relativeDay, wasteFractionLabel, wasteScheduleWeeks } from "./lib/waste";
 import { distanceLabel, rankedSensors, type Locality } from "./lib/locality";
 import { formatTemperature } from "./lib/temperature";
 import type { DataSource, Result } from "../scripts/lib/sources.ts";
@@ -148,7 +148,7 @@ export default function Dashboard({ locality }: { locality: Locality }) {
       {collections.length ? <ul>{collections.map(entry => <li key={entry.date}>
         <strong>{relativeDay(entry.date, today)}</strong>
         <time dateTime={entry.date}>{formatWasteDate(entry.date)}</time>
-        <small>{entry.fractions.map(fraction => fractions[fraction]).join(" · ")}</small>
+        <small>{entry.fractions.map(wasteFractionLabel).join(" · ")}</small>
       </li>)}</ul> : <strong>Brak odbioru w ciągu 7 dni</strong>}
     </div>)}
    </a>

@@ -7,10 +7,21 @@ import { weatherUrl } from "../scripts/lib/weather-data.ts";
 import { rankedSensors } from "../src/lib/locality.ts";
 import { formatTemperature } from "../src/lib/temperature.ts";
 import { riversWithWaterLevels } from "../src/lib/water.ts";
-import { currentSchedules, wasteScheduleWeeks, type WasteSchedule } from "../src/lib/waste.ts";
+import { currentSchedules, fractions, wasteFractionLabel, wasteScheduleWeeks, type Fraction, type WasteSchedule } from "../src/lib/waste.ts";
 
 const localities = readLocalities();
 const locality = (slug: string) => localities.find(config => config.slug === slug)!;
+
+test("waste labels pair the municipal bin colors and bulky pickup symbol with their names", () => {
+  assert.deepEqual((Object.keys(fractions) as Fraction[]).map(wasteFractionLabel), [
+    "⚫ Zmieszane",
+    "🟡 Metale i tworzywa sztuczne",
+    "🔵 Papier",
+    "🟢 Szkło",
+    "🟤 Bioodpady",
+    "🛋️ Wielkogabarytowe",
+  ]);
+});
 
 test("the forecast sends the verified point of each locality", () => {
   const forecastUrls = localities.map(locality => {

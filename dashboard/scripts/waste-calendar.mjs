@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { fractions } from "../src/lib/waste.ts";
+import { wasteFractionLabel } from "../src/lib/waste.ts";
 
 const calendarDate = date => date.replaceAll("-", "");
 
@@ -50,7 +50,7 @@ export function wasteCalendar(locality, schedule) {
     `DTSTART;VALUE=DATE:${calendarDate(date)}`,
     // The end date of an all-day event is exclusive.
     `DTEND;VALUE=DATE:${calendarDate(dayAfter(date))}`,
-    `SUMMARY:${calendarText(`Odpady – ${pickup.map(fraction => fractions[fraction]).join(", ")}`)}`,
+    `SUMMARY:${calendarText(`Odpady – ${pickup.map(wasteFractionLabel).join(", ")}`)}`,
     `DESCRIPTION:${description}`,
     `URL:${sourceUrl}`,
     "TRANSP:TRANSPARENT",

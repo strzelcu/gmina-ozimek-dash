@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { readLocalities } from "../../scripts/localities.mjs";
 import { wasteCalendar } from "../../scripts/waste-calendar.mjs";
 import { rankedSensors, type Locality } from "../../src/lib/locality.ts";
+import { fractionEmoji, wasteFractionLabel } from "../../src/lib/waste.ts";
 import { checkLayout, widths } from "./layout.ts";
 import { mockSources } from "./sources.ts";
 
@@ -109,12 +110,18 @@ for (const locality of localities) {
     const today = date(0);
     const last = date(7);
     const schedules = locality.waste.schedules.filter(schedule => today >= schedule.validFrom && today <= schedule.validUntil);
-    const dates = locality.waste.schedules.flatMap(schedule => schedule.collections
-      .filter(entry => today <= entry.date && entry.date <= last).map(entry => entry.date)).sort();
+    const pickups = locality.waste.schedules.flatMap(schedule => schedule.collections
+      .filter(entry => today <= entry.date && entry.date <= last));
+    const dates = pickups.map(entry => entry.date).sort();
     for (const selector of [".summary-waste time", ".waste-next time"]) {
       expect(await page.locator(selector).evaluateAll(nodes => nodes.map(node => node.getAttribute("datetime")).sort())).toEqual(dates);
     }
+    const labels = pickups.map(entry => entry.fractions.map(wasteFractionLabel).join(" · ")).sort();
+    for (const selector of [".summary-waste li small", ".waste-next p"]) {
+      expect((await page.locator(selector).allTextContents()).sort()).toEqual(labels);
+    }
     await expect(page.locator(".waste-fractions > li")).toHaveCount(6 * schedules.length);
+    await expect(page.locator(".waste-fraction-icon")).toHaveText(schedules.flatMap(() => Object.values(fractionEmoji)));
     const downloads = locality.waste.schedules.filter(schedule => today <= schedule.validUntil);
     const calendar = page.locator(".waste-calendars");
     await expect(calendar.getByRole("link", { name: "Pobierz harmonogram (.ics)" })).toHaveCount(downloads.length);
