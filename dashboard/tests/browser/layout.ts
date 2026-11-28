@@ -26,7 +26,7 @@ export async function checkLayout(page: Page, width: number) {
     const panels = "header, main, footer, .card, .directory-heading, .directory-grid > li, .directory-locality, .daily-summary-item, "
       + ".air-station, .water-station, .warning-entry, .forecast-day > div, .weather-metrics > div, "
       + ".environment-metrics > div, .aq-legend-row > span, .waste-next, .waste-fractions > li, "
-      + ".waste-calendars, .waste-download";
+      + ".waste-calendars, .waste-download, .waste-pszok, .waste-pszok-grid > div";
 
     check(document.documentElement.scrollWidth <= viewportWidth + tolerance, "Cała strona ma poziomy przewijak");
     for (const element of document.querySelectorAll("#root *")) {
@@ -75,6 +75,7 @@ export async function checkLayout(page: Page, width: number) {
     }
     for (const grid of document.querySelectorAll(".water-grid")) columns(grid, ":scope > article", width <= 640 ? 1 : width <= 1150 ? 2 : flowColumns(grid, 280, 24));
     for (const grid of document.querySelectorAll(".waste-fractions")) columns(grid, ":scope > li", width <= 600 ? 1 : width <= 900 ? 2 : 3);
+    for (const grid of document.querySelectorAll(".waste-pszok-grid")) columns(grid, ":scope > div", width <= 600 ? 1 : 2);
     for (const list of document.querySelectorAll(".waste-pickup-fractions")) {
       const rows = Array.from(list.children, item => item.getBoundingClientRect());
       check(rows.every((row, index) => index === 0 || row.top >= rows[index - 1].bottom - tolerance),

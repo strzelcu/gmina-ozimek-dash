@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Download, ExternalLink, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import PszokCard from "./PszokCard";
 import { fractionEmoji, fractions, polishDay, relativeDay, upcomingCollections, wasteFractionLabel, type Fraction, type wasteScheduleWeeks } from "../lib/waste";
 import type { Locality } from "../lib/locality";
 
@@ -86,5 +87,6 @@ export default function WasteSection({ waste, today, weeks }: { waste: Locality[
     {visible.map(week => <Schedule
       key={`${week.schedule.region}:${week.schedule.coverage}:${week.schedule.validFrom}`} week={week} today={today}
     />)}
+    {waste.pszok && <PszokCard point={waste.pszok} />}
   </section>;
 }
