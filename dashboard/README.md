@@ -21,7 +21,7 @@ Dashboardy działają bez analityki i śledzenia odwiedzin. Przeglądarka zachow
 
 ## Kalendarz odbioru odpadów
 
-Kompilacja generuje plik `.ics` z pełnym harmonogramem YAML dla danej miejscowości, rejonu i okresu. Po sprawdzeniu zmienionych terminów zaktualizuj pole `verifiedAt` w YAML. Panel **„Wywóz odpadów”** pokazuje datę wersji i przycisk pobrania przy każdym dostępnym harmonogramie. Zwinięta sekcja pod przyciskami zawiera instrukcje jednorazowego importu do Kalendarza Google, Outlooka i iCloud.
+Kompilacja generuje plik `.ics` z pełnym harmonogramem YAML dla danej miejscowości, rejonu i okresu. Po sprawdzeniu zmienionych terminów zaktualizuj pole `verifiedAt` w YAML. Panel **„Wywóz odpadów”** pokazuje datę wersji i przycisk pobrania przy każdym dostępnym harmonogramie.
 
 Po kompilacji uruchom `npm run test:calendars --prefix dashboard`, aby zaimportować wszystkie pliki w kliencie `khal` i porównać zapisane wydarzenia z YAML. Klient `khal` może być dostępny w `PATH` lub pod ścieżką wskazaną zmienną `KHAL_BIN`. GitHub Actions sprawdza import i układ przed wdrożeniem.
 
