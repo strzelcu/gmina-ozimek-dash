@@ -63,14 +63,14 @@ test("katalog miejscowości przy każdej szerokości", async ({ page }) => {
     await expect(link).toHaveAttribute("href", new URL(`${locality.slug}/`, page.url()).pathname);
     const icon = locality.kind === "city" ? "building-2" : "house";
     await expect(link.locator(`svg.lucide-${icon}`)).toHaveAttribute("aria-hidden", "true");
-    const parts = link.locator("..").locator(".locality-parts");
     if (locality.parts?.length) {
+      const parts = link.locator("strong + .locality-parts");
       const names = locality.parts.join(", ");
       await expect(parts).toBeVisible();
       await expect(parts).toHaveText(names);
       await expect(link).toHaveAccessibleDescription(names);
     } else {
-      await expect(parts).toHaveCount(0);
+      await expect(link.locator(".locality-parts")).toHaveCount(0);
     }
   }
   await checkFooter(page);
@@ -187,6 +187,28 @@ for (const width of [320, 1440]) {
     await expect(page.getByRole("heading", { level: 1, name: "Dashboardy miejscowości" })).toBeVisible();
   });
 }
+
+test("części wsi są pod tytułem już podczas ładowania dashboardu", async ({ page }) => {
+  const locality = localities.find(entry => entry.slug === "krasiejow")!;
+  const names = locality.parts!.join(", ");
+  const chunk = Promise.withResolvers<void>();
+  await mockSources(page, locality);
+  await page.route(/\/assets\/Dashboard-[^/]+\.js$/, async route => {
+    await chunk.promise;
+    await route.continue();
+  });
+  try {
+    await page.goto(`${locality.slug}/`, { waitUntil: "domcontentloaded" });
+    await expect(page.getByText("Wczytywanie dashboardu…", { exact: true })).toBeVisible();
+    const parts = page.locator(".locality-title h1 + .locality-parts");
+    await expect(parts).toBeVisible();
+    await expect(parts).toHaveText(names);
+    for (const width of [320, 1440]) await checkLayout(page, width);
+  } finally {
+    chunk.resolve();
+  }
+  await expect(page.locator(".locality-heading h1 + .locality-parts")).toHaveText(names);
+});
 
 test("ładowanie i niedostępne dane nie rozbijają układu", async ({ page }) => {
   const locality = localities.find(entry => entry.waste.schedules.length > 1) ?? localities[0];
