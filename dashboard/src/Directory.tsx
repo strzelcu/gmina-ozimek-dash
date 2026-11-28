@@ -25,11 +25,15 @@ export default function Directory({ localities }: { localities: Locality[] }) {
             const parts = locality.parts?.join(", ");
             const partsId = parts ? `${locality.slug}-parts` : undefined;
             return <li key={locality.slug}>
-              <a className="directory-locality" href={`${base}${locality.slug}/`} aria-describedby={partsId}>
+              <a className="directory-locality" href={`${base}${locality.slug}/`}
+                aria-label={`${locality.name} ${label}`} aria-describedby={partsId}>
                 <span className="directory-icon"><Icon size={23} aria-hidden="true" /></span>
-                <span><strong>{locality.name}</strong><small>{label}</small></span>
+                <span className="directory-locality-text">
+                  <strong>{locality.name}</strong>
+                  {parts && <span className="locality-parts" id={partsId}>{parts}</span>}
+                  <small>{label}</small>
+                </span>
               </a>
-              {parts && <p className="locality-parts" id={partsId}>{parts}</p>}
             </li>;
           })}
         </ul>

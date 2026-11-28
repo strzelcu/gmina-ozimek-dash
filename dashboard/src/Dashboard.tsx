@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cachedData, refreshData } from "./lib/browser-data";
 import AirSection, { airStatus } from "./components/AirSection";
 import Header from "./Header";
+import LocalityTitle from "./components/LocalityTitle";
 import WarningsSection from "./components/WarningsSection";
 import WaterSection from "./components/WaterSection";
 import EnvironmentExtras, { pollenPlants, usePollenForecast } from "./components/EnvironmentExtras";
@@ -97,8 +98,9 @@ export default function Dashboard({ locality }: { locality: Locality }) {
  }).format(new Date(`${today}T12:00:00Z`));
  return <><Header /><main>
  <div className="page-heading locality-heading">
-  <div><p className="date-line">{longDay}</p><h1>{locality.name}</h1>
-   {!!locality.parts?.length && <p className="locality-parts">{locality.parts.join(", ")}</p>}
+  <div>
+   <p className="date-line">{longDay}</p>
+   <LocalityTitle locality={locality} />
    <p className="location"><MapPin size={15} aria-hidden="true" />{locality.municipality} · {locality.region}</p>
   </div>
   <div className="refresh-area"><Button className="refresh-button" variant="outline" onClick={() => { void refresh(); }} disabled={loading}>

@@ -85,11 +85,9 @@ export async function checkLayout(page: Page, width: number) {
       check(visible(heading.querySelector(".location")!) === (width > 760), "Oznaczenie położenia ma niewłaściwą widoczność");
     }
     for (const parts of document.querySelectorAll(".locality-parts")) {
-      const container = parts.parentElement!;
-      const title = container.querySelector("h1, .directory-locality strong")!;
-      const above = container.querySelector(".directory-locality") ?? title;
-      check(parts.getBoundingClientRect().top >= above.getBoundingClientRect().bottom - tolerance,
-        "Części wsi muszą mieścić się pod odnośnikiem lub tytułem");
+      const title = parts.previousElementSibling!;
+      check(parts.getBoundingClientRect().top >= title.getBoundingClientRect().bottom - tolerance,
+        "Części wsi muszą mieścić się pod nazwą miejscowości");
       check(parseFloat(getComputedStyle(parts).fontSize) < parseFloat(getComputedStyle(title).fontSize),
         "Części wsi muszą mieć mniejszą czcionkę od nazwy sołectwa");
     }
