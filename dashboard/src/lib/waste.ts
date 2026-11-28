@@ -15,6 +15,7 @@ export type WasteSchedule = {
   validUntil: string;
   verifiedAt: string;
   sourceUrl: string;
+  calendarFile?: string;
   collections: { date: string; fractions: Fraction[] }[];
 };
 export const polishDay = (now = new Date()) => new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Warsaw" }).format(now);

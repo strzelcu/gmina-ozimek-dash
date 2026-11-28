@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
+import { readFile } from "node:fs/promises";
 import { readLocalities } from "../../scripts/localities.mjs";
+import { wasteCalendar } from "../../scripts/waste-calendar.mjs";
 import { rankedSensors, type Locality } from "../../src/lib/locality.ts";
 import { checkLayout, widths } from "./layout.ts";
 import { mockSources } from "./sources.ts";
@@ -113,6 +115,11 @@ for (const locality of localities) {
       expect(await page.locator(selector).evaluateAll(nodes => nodes.map(node => node.getAttribute("datetime")).sort())).toEqual(dates);
     }
     await expect(page.locator(".waste-fractions > li")).toHaveCount(6 * schedules.length);
+    const downloads = locality.waste.schedules.filter(schedule => today <= schedule.validUntil);
+    const calendar = page.locator(".waste-calendars");
+    await expect(calendar.getByRole("link", { name: "Pobierz harmonogram (.ics)" })).toHaveCount(downloads.length);
+    await expect(calendar.locator(".waste-download strong")).toHaveText(downloads.map(schedule => `Rejon ${schedule.region} · ${schedule.coverage}`));
+    await expect(calendar.locator(".waste-import-help dl")).toBeHidden();
     if (!locality.waste.schedules.length) {
       await expect(summary.getByText("Brak aktualnego harmonogramu")).toBeVisible();
       await expect(page.getByText("Brak aktualnego harmonogramu w dashboardzie. Sprawdź wykaz gminy.")).toBeVisible();
@@ -208,6 +215,41 @@ test("części wsi są pod tytułem już podczas ładowania dashboardu", async (
     chunk.resolve();
   }
   await expect(page.locator(".locality-heading h1 + .locality-parts")).toHaveText(names);
+});
+
+test("pobieranie dwóch kalendarzy Nowej Schodni i rozwijanie instrukcji", async ({ page }) => {
+  const locality = localities.find(entry => entry.slug === "nowa-schodnia")!;
+  const now = await mockSources(page, locality);
+  const today = new Date(now).toISOString().slice(0, 10);
+  const schedules = locality.waste.schedules.filter(schedule => today <= schedule.validUntil);
+  await page.setViewportSize({ width: 320, height: 900 });
+  await openDashboard(page, locality);
+  const calendar = page.locator(".waste-calendars");
+  for (const [index, schedule] of schedules.entries()) {
+    const link = calendar.getByRole("link", { name: "Pobierz harmonogram (.ics)" }).nth(index);
+    await expect(link).toHaveAccessibleDescription(new RegExp(`^Rejon ${schedule.region} · `));
+    const downloaded = page.waitForEvent("download");
+    await link.click();
+    const file = await downloaded;
+    const expected = wasteCalendar(locality, schedule);
+    expect(file.suggestedFilename()).toBe(expected.fileName.split("/").at(-1));
+    expect(await readFile(await file.path(), "utf8")).toBe(expected.source);
+  }
+  const help = calendar.locator(".waste-import-help");
+  const summary = help.locator("summary");
+  await expect(help.locator("dl")).toBeHidden();
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  await expect(help.locator("dl")).toBeVisible();
+  await expect(help.locator("dt")).toHaveText(["Google Calendar", "Outlook", "iCloud"]);
+  await page.keyboard.press("Enter");
+  await expect(help.locator("dl")).toBeHidden();
+
+  const lastDay = locality.waste.schedules.map(schedule => schedule.validUntil).sort().at(-1)!;
+  await page.clock.setFixedTime(Date.parse(`${lastDay}T23:59:59Z`));
+  await page.reload();
+  await expect(page.getByText("Brak aktualnego harmonogramu w dashboardzie. Sprawdź wykaz gminy.")).toBeVisible();
+  await expect(calendar).toHaveCount(0);
 });
 
 test("ładowanie i niedostępne dane nie rozbijają układu", async ({ page }) => {

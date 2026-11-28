@@ -20,6 +20,7 @@ Skopiuj [przykład](assets/szczedrzyk.example.yaml) i uzupełnij pola zgodnie ze
 ## Zachowaj zachowanie szablonu
 
 - Kafelek „Na dziś” pokazuje wszystkie odbiory od dziś do siódmego dnia włącznie, również dla kilku rejonów. Daty wyświetla w strefie `Europe/Warsaw`. Temperaturę zaokrągloną do zera wyświetla jako `0°C`.
+- Kompilacja tworzy osobny plik `.ics` dla każdego harmonogramu w YAML. Każdy dzień odbioru jest jednym wydarzeniem całodniowym z listą frakcji. Po weryfikacji korekty terminów zaktualizuj `verifiedAt`. Zwinięta sekcja pod przyciskami pobrania wyjaśnia jednorazowy import do Kalendarza Google, Outlooka i iCloud.
 - Przy czujniku spoza miejscowości etykieta „Spoza miejscowości” jest po prawej stronie nazwy. Adres ma osobny wiersz i może się zawijać. Starsze odczyty i chwilowe braki danych mają oznaczenia przy urządzeniu.
 - Kafelek wód pokazuje wodowskaz z potwierdzonym poziomem i poprawną datą pomiaru. Cieki bez takich odczytów pomija. Gdy brak wszystkich odczytów, kafelek znika po zakończeniu ładowania.
 - W katalogu rodzaj z YAML dobiera ikonę budynków dla miasta albo ikonę domu dla sołectwa. Katalog i dashboardy korzystają z `dashboard/src/components/DashboardFooter.tsx`. Stopka zawiera źródła danych, link do repozytorium, GitHub Issues, e-mail do zgłoszeń oraz informacje o braku śledzenia i wygenerowaniu strony przez AI. Linki do czujników i PRNG na dashboardzie wskazują źródła danej miejscowości.
@@ -35,9 +36,12 @@ node --test tests/*.test.ts
 npm run check --prefix dashboard
 npm run data --prefix dashboard
 npm run build --prefix dashboard
+npm run test:calendars --prefix dashboard
 npm exec --prefix dashboard -- playwright install --only-shell chromium
 npm run test:responsive --prefix dashboard
 ```
+
+Test importu używa klienta `khal` dostępnego w `PATH` albo pod ścieżką wskazaną w `KHAL_BIN`.
 
 1. Otwórz podgląd przez `npm run preview --prefix dashboard`. Domyślna ścieżka to `/gmina-ozimek/`. Jeśli ustawiasz `DASHBOARD_BASE_PATH`, użyj tej samej wartości do kompilacji, podglądu i testów. Sprawdź wpis w katalogu, bezpośredni adres dashboardu i zgodność jego danych z YAML. Zweryfikuj linki źródłowe, odczyty bieżące i stany braku danych.
 2. Sprawdź wersję mobilną i szeroką. Testy Chromium obejmują wszystkie pliki YAML, karty, stopkę, kontrolki i przewijanie oraz szerokości po obu stronach breakpointów. Przy zmianie progów uzupełnij macierz w `dashboard/tests/browser/layout.ts`. [Tabela breakpointów i polecenia](../../README.md#testy-układu)
