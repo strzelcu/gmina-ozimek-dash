@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
-import { readLocalities } from "../../scripts/localities.mjs";
+import { readLocalities, readPszok } from "../../scripts/localities.mjs";
 import { wasteCalendar } from "../../scripts/waste-calendar.mjs";
 import { rankedSensors, type Locality } from "../../src/lib/locality.ts";
 import { fractionEmoji, wasteFractionLabel } from "../../src/lib/waste.ts";
@@ -8,6 +8,7 @@ import { checkLayout, widths } from "./layout.ts";
 import { mockSources } from "./sources.ts";
 
 const localities: Locality[] = readLocalities();
+const pszokPoints = readPszok();
 const linkedSections = ["air-measurements", "weather-details", "pollen-title", "waste-details"];
 const directoryLinkName = ({ name, kind }: Locality) => `${name} ${kind === "city" ? "Miasto" : "Sołectwo"}`;
 
@@ -55,10 +56,29 @@ async function checkFooter(page: Page, locality?: Locality) {
   await expect(brand.locator("img")).toHaveAttribute("src", new URL(`${locality ? "../" : ""}programista-na-wsi.webp`, page.url()).pathname);
 }
 
+async function checkPszok(page: Page, locality: Locality) {
+  const point = pszokPoints.get(locality.municipality);
+  await expect(page.locator(".waste-pszok")).toHaveCount(point ? 1 : 0);
+  if (!point) return;
+
+  const card = page.locator("#waste-details").getByRole("article", { name: point.name, exact: true });
+  await expect(card.getByRole("heading", { name: point.name, exact: true })).toBeVisible();
+  await expect(card.getByText(point.address, { exact: true })).toBeVisible();
+  if (point.entrance) await expect(card.getByText(point.entrance, { exact: true })).toBeVisible();
+  await expect(card.getByRole("link", { name: point.phone })).toHaveAttribute("href", `tel:${point.phone.replaceAll(" ", "")}`);
+  await expect(card.getByRole("link", { name: "Zasady i limity" })).toHaveAttribute("href", point.sourceUrl);
+  await expect(card.locator(".waste-pszok-hours dt")).toHaveText(point.hours.map(({ days }) => days));
+  await expect(card.locator(".waste-pszok-hours dd")).toHaveText(point.hours.map(({ opens, closes }) => `${opens}–${closes}`));
+  if (point.closed) await expect(card.getByText(point.closed, { exact: true })).toBeVisible();
+  await expect(card.getByText(point.requirements, { exact: true })).toBeVisible();
+  await expect(card.getByText(`Można oddać m.in. ${point.accepted}.`, { exact: true })).toBeVisible();
+}
+
 test("katalog miejscowości przy każdej szerokości", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByRole("heading", { level: 1, name: "Dashboardy miejscowości" })).toBeVisible();
   await expect(page.getByText("Wersja testowa", { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/PSZOK/)).toHaveCount(0);
   const navigation = page.getByRole("navigation", { name: "Miejscowości gminy Ozimek" });
   await expect(navigation.getByRole("link")).toHaveCount(localities.length);
   for (const locality of localities) {
@@ -90,6 +110,7 @@ for (const locality of localities) {
 
     const summary = page.getByRole("region", { name: "Na dziś" });
     await expect(summary.getByRole("link")).toHaveCount(linkedSections.length);
+    await expect(summary.getByText(/PSZOK/)).toHaveCount(0);
     for (const section of linkedSections) await expect(summary.locator(`a[href="#${section}"]`)).toBeVisible();
     await expect(summary.locator(".daily-summary-temperature strong")).toHaveText("0°C");
     await expect(page.locator(".big-temperature")).toHaveText("0°C");
@@ -129,6 +150,7 @@ for (const locality of localities) {
     await expect(calendar.getByRole("link", { name: "Pobierz harmonogram (.ics)" })).toHaveCount(downloads.length);
     await expect(calendar.locator(".waste-download strong")).toHaveText(downloads.map(schedule => `Rejon ${schedule.region} · ${schedule.coverage}`));
     await expect(page.getByText("Jak zaimportować harmonogram?", { exact: true })).toHaveCount(0);
+    await checkPszok(page, locality);
     if (!locality.waste.schedules.length) {
       await expect(summary.getByText("Brak aktualnego harmonogramu")).toBeVisible();
       await expect(page.getByText("Brak aktualnego harmonogramu w dashboardzie. Sprawdź wykaz gminy.")).toBeVisible();
@@ -249,6 +271,7 @@ test("pobieranie dwóch kalendarzy Nowej Schodni i wygasanie harmonogramów", as
   await page.reload();
   await expect(page.getByText("Brak aktualnego harmonogramu w dashboardzie. Sprawdź wykaz gminy.")).toBeVisible();
   await expect(calendar).toHaveCount(0);
+  await expect(page.locator("#waste-details .waste-pszok")).toBeVisible();
 });
 
 test("ładowanie i niedostępne dane nie rozbijają układu", async ({ page }) => {

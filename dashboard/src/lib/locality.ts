@@ -1,4 +1,4 @@
-import type { WasteSchedule } from "./waste.ts";
+import type { Pszok, WasteSchedule } from "./waste.ts";
 
 export type Position = { latitude: number; longitude: number };
 export type AirSensor = Position & {
@@ -29,7 +29,7 @@ export type Locality = {
   warnings: WarningScope;
   air: { sourceUrls: string[]; sensors: AirSensor[] };
   water: { sourceUrl: string; rivers: Watercourse[] };
-  waste: { sourceUrl: string; schedules: WasteSchedule[] };
+  waste: { sourceUrl: string; schedules: WasteSchedule[]; pszok?: Pszok };
 };
 
 export function distanceKm(from: Position, to: Position) {

@@ -21,6 +21,18 @@ export function wasteFractionLabel(fraction: Fraction) {
   return `${fractionEmoji[fraction]} ${fractions[fraction]}`;
 }
 
+export type Pszok = {
+  name: string;
+  address: string;
+  entrance?: string;
+  phone: string;
+  hours: { days: string; opens: string; closes: string }[];
+  closed?: string;
+  requirements: string;
+  accepted: string;
+  sourceUrl: string;
+};
+
 export type WasteSchedule = {
   region: string;
   coverage: string;

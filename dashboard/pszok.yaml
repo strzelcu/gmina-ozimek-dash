@@ -1,0 +1,19 @@
+Gmina Ozimek:
+  name: PSZOK w Antoniowie
+  address: Antoniów, ul. Powstańców Śląskich 54
+  entrance: Wjazd od ul. Ozimskiej.
+  phone: '+48 77 44 49 109'
+  hours:
+    - days: Poniedziałek, środa, piątek
+      opens: '07:00'
+      closes: '15:00'
+    - days: Wtorek, czwartek
+      opens: '09:00'
+      closes: '17:00'
+    - days: Sobota
+      opens: '08:00'
+      closes: '12:00'
+  closed: Zamknięte w niedziele, święta, Wielką Sobotę oraz 24 i 31 grudnia.
+  requirements: Mieszkańcy gminy mogą oddać posegregowane odpady. Zabierz dokument tożsamości i potwierdzenie opłaty za odpady.
+  accepted: meble i inne gabaryty, elektroodpady, odzież i tekstylia, posegregowany gruz oraz opony z samochodów osobowych
+  sourceUrl: https://pgkim.ozimek.pl/9-gospodarka-komunalna/61-pszok.html

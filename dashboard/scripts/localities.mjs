@@ -5,7 +5,8 @@ import { parseDocument } from "yaml";
 import { rankedSensors } from "../src/lib/locality.ts";
 
 export const localityDirectory = fileURLToPath(new URL("../localities/", import.meta.url));
-const schema = JSON.parse(readFileSync(new URL("../skills/ozimek-dashboard/references/locality.schema.json", import.meta.url), "utf8"));
+export const pszokConfigPath = fileURLToPath(new URL("../pszok.yaml", import.meta.url));
+const schemas = new URL("../skills/ozimek-dashboard/references/", import.meta.url);
 const ajv = new Ajv({ allErrors: true });
 ajv.addFormat("date", date => /^\d{4}-\d{2}-\d{2}$/.test(date)
   && Number.isFinite(Date.parse(date)) && new Date(date).toISOString().slice(0, 10) === date);
@@ -17,17 +18,22 @@ ajv.addFormat("https-url", value => {
     return false;
   }
 });
-const validate = ajv.compile(schema);
+const validate = ajv.compile(JSON.parse(readFileSync(new URL("locality.schema.json", schemas), "utf8")));
+const validatePszok = ajv.compile(JSON.parse(readFileSync(new URL("pszok.schema.json", schemas), "utf8")));
 
 function unique(values, label, fileName) {
   if (new Set(values).size !== values.length) throw Error(`${fileName}: powtarzające się ${label}`);
 }
 
-/** @returns {import("../src/lib/locality.ts").Locality} */
-export function checkLocality(contents, fileName) {
+function parseYaml(contents, fileName) {
   const document = parseDocument(contents);
   if (document.errors.length) throw Error(`${fileName}: ${document.errors[0].message}`);
-  const config = document.toJS();
+  return document.toJS();
+}
+
+/** @returns {import("../src/lib/locality.ts").Locality} */
+export function checkLocality(contents, fileName) {
+  const config = parseYaml(contents, fileName);
   if (!validate(config)) throw Error(`${fileName}: ${ajv.errorsText(validate.errors)}`);
   if (fileName !== `${config.slug}.yaml`) throw Error(`${fileName}: nazwa pliku musi odpowiadać polu slug`);
 
@@ -55,4 +61,11 @@ export function readLocalities() {
   const configs = files.map(name => checkLocality(readFileSync(new URL(`../localities/${name}`, import.meta.url), "utf8"), name));
   unique(configs.map(config => config.simc), "kody SIMC", "dashboard/localities");
   return configs;
+}
+
+/** @returns {Map<string, import("../src/lib/waste.ts").Pszok>} */
+export function readPszok() {
+  const entries = parseYaml(readFileSync(pszokConfigPath, "utf8"), "pszok.yaml");
+  if (!validatePszok(entries)) throw Error(`pszok.yaml: ${ajv.errorsText(validatePszok.errors)}`);
+  return new Map(Object.entries(entries));
 }

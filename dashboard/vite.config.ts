@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/postcss";
-import { readLocalities, localityDirectory } from "./scripts/localities.mjs";
+import { readLocalities, localityDirectory, readPszok, pszokConfigPath } from "./scripts/localities.mjs";
 import { dashboardBasePath } from "./scripts/dashboard-path.mjs";
 import { wasteCalendar } from "./scripts/waste-calendar.mjs";
 
@@ -25,9 +25,13 @@ export default defineConfig(({ command }) => {
         load(id) {
           if (id !== `\0${localitiesModule}`) return;
           calendarFiles.clear();
+          this.addWatchFile(pszokConfigPath);
           const localities = readLocalities();
+          const points = readPszok();
           for (const locality of localities) {
             this.addWatchFile(join(localityDirectory, `${locality.slug}.yaml`));
+            const point = points.get(locality.municipality);
+            if (point) locality.waste.pszok = point;
             locality.waste.schedules = locality.waste.schedules.map(schedule => {
               const { fileName, source } = wasteCalendar(locality, schedule);
               if (command === "build") this.emitFile({ type: "asset", fileName, source });
