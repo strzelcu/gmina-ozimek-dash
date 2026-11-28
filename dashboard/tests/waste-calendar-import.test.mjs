@@ -7,7 +7,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { readLocalities } from "../scripts/localities.mjs";
 import { wasteCalendar } from "../scripts/waste-calendar.mjs";
-import { fractions } from "../src/lib/waste.ts";
+import { wasteFractionLabel } from "../src/lib/waste.ts";
 
 const output = new URL("../dist/", import.meta.url);
 const client = process.env.KHAL_BIN ?? "khal";
@@ -46,7 +46,7 @@ for (const { locality, schedule, fileName } of calendars) {
     const expected = schedule.collections.toSorted((a, b) => a.date.localeCompare(b.date)).map(pickup => ({
       "start-date": pickup.date,
       "end-date": pickup.date,
-      title: `Odpady – ${pickup.fractions.map(fraction => fractions[fraction]).join(", ")}`,
+      title: `Odpady – ${pickup.fractions.map(wasteFractionLabel).join(", ")}`,
       description: `Rejon ${schedule.region} · ${schedule.coverage}\nZabudowa jednorodzinna. Wystaw pojemniki lub worki do 6:00 w dniu odbioru.`,
     }));
     assert.deepEqual(imported, expected);

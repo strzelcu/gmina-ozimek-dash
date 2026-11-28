@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Download, ExternalLink, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fractions, polishDay, relativeDay, upcomingCollections, type Fraction, type wasteScheduleWeeks } from "../lib/waste";
+import { fractionEmoji, fractions, polishDay, relativeDay, upcomingCollections, wasteFractionLabel, type Fraction, type wasteScheduleWeeks } from "../lib/waste";
 import type { Locality } from "../lib/locality";
 
 export const formatWasteDate = (date: string) => new Intl.DateTimeFormat("pl-PL", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Warsaw" }).format(new Date(date + "T12:00:00Z"));
@@ -33,13 +33,13 @@ function Schedule({ week, today }: { week: WasteWeek; today: string }) {
       {reminders.map(entry => <div className="waste-next" key={entry.date}><div>
         <span className="pill good">{relativeDay(entry.date, today)}</span>
         <h4><time dateTime={entry.date}>{formatWasteDate(entry.date)}</time></h4>
-        <p>{entry.fractions.map(fraction => fractions[fraction]).join(" · ")}</p>
+        <p>{entry.fractions.map(wasteFractionLabel).join(" · ")}</p>
       </div></div>)}
       {!reminders.length && <p className="section-message">Brak wywozów w ciągu najbliższych 7 dni.</p>}
     </>}
     {active && <ul className="waste-fractions">{(Object.keys(fractions) as Fraction[]).map(fraction => {
       const entry = upcoming.find(item => item.fractions.includes(fraction));
-      return <li key={fraction}><span className={`waste-dot waste-${fraction}`} aria-hidden="true" /><div>
+      return <li key={fraction}><span className="waste-fraction-icon" aria-hidden="true">{fractionEmoji[fraction]}</span><div>
         <strong>{fractions[fraction]}</strong>
         {entry ? <><time dateTime={entry.date}>{formatWasteDate(entry.date)}</time><span>{relativeDay(entry.date, today)}</span></>
           : <span>Brak kolejnego terminu w tym harmonogramie</span>}

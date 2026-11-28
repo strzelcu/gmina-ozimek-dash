@@ -7,6 +7,20 @@ export const fractions = {
   bulky: "Wielkogabarytowe",
 } as const;
 export type Fraction = keyof typeof fractions;
+
+export const fractionEmoji = {
+  mixed: "⚫",
+  packaging: "🟡",
+  paper: "🔵",
+  glass: "🟢",
+  bio: "🟤",
+  bulky: "🛋️",
+} satisfies Record<Fraction, string>;
+
+export function wasteFractionLabel(fraction: Fraction) {
+  return `${fractionEmoji[fraction]} ${fractions[fraction]}`;
+}
+
 export type WasteSchedule = {
   region: string;
   coverage: string;
