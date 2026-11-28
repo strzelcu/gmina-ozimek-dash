@@ -57,7 +57,7 @@ water:
           longitude: 18.0767
           note: Mała Panew poniżej zapory Jeziora Turawskiego
 waste:
-  sourceUrl: https://ozimek.pl/229-ochrona-srodowiska/32282-harmonogram-wywozu-odpadow.html
+  sourceUrl: https://ozimek.pl/50229-ochrona-srodowiska-50229/32282-harmonogram-wywozu-odpadow-32282.html
   schedules:
     - region: '4'
       coverage: Grodziec
