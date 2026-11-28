@@ -25,7 +25,8 @@ export async function checkLayout(page: Page, width: number) {
     const visible = (element: Element) => element.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true });
     const panels = "header, main, footer, .card, .directory-heading, .directory-grid > li, .directory-locality, .daily-summary-item, "
       + ".air-station, .water-station, .warning-entry, .forecast-day > div, .weather-metrics > div, "
-      + ".environment-metrics > div, .aq-legend-row > span, .waste-next, .waste-fractions > li";
+      + ".environment-metrics > div, .aq-legend-row > span, .waste-next, .waste-fractions > li, "
+      + ".waste-calendars, .waste-download";
 
     check(document.documentElement.scrollWidth <= viewportWidth + tolerance, "Cała strona ma poziomy przewijak");
     for (const element of document.querySelectorAll("#root *")) {

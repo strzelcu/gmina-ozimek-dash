@@ -36,6 +36,11 @@ jobs:
           npm run check --prefix dashboard
       - name: Build official locality dashboards
         run: npm run build --prefix dashboard
+      - name: Verify waste calendar imports
+        run: |
+          python3 -m venv "$RUNNER_TEMP/ozimek-khal"
+          "$RUNNER_TEMP/ozimek-khal/bin/python" -m pip install 'khal==0.14.1'
+          KHAL_BIN="$RUNNER_TEMP/ozimek-khal/bin/khal" npm run test:calendars --prefix dashboard
       - name: Install Chromium for Playwright
         working-directory: dashboard
         run: npx playwright install --with-deps --only-shell chromium

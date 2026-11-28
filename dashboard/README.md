@@ -19,6 +19,12 @@ Domyślny adres podglądu kończy się na `/gmina-ozimek/`. Ustaw `DASHBOARD_BAS
 
 Dashboardy działają bez analityki i śledzenia odwiedzin. Przeglądarka zachowuje lokalnie dane źródłowe, w tym prognozy, ostrzeżenia i odczyty, aby móc je wyświetlić przy chwilowym braku połączenia. [Zgłoszenia w repozytorium](https://github.com/strzelcu/gmina-ozimek-dash/issues)
 
+## Kalendarz odbioru odpadów
+
+Kompilacja generuje plik `.ics` z pełnym harmonogramem YAML dla danej miejscowości, rejonu i okresu. Po sprawdzeniu zmienionych terminów zaktualizuj pole `verifiedAt` w YAML. Panel **„Wywóz odpadów”** pokazuje datę wersji i przycisk pobrania przy każdym dostępnym harmonogramie. Zwinięta sekcja pod przyciskami zawiera instrukcje jednorazowego importu do Kalendarza Google, Outlooka i iCloud.
+
+Po kompilacji uruchom `npm run test:calendars --prefix dashboard`, aby zaimportować wszystkie pliki w kliencie `khal` i porównać zapisane wydarzenia z YAML. Klient `khal` może być dostępny w `PATH` lub pod ścieżką wskazaną zmienną `KHAL_BIN`. GitHub Actions sprawdza import i układ przed wdrożeniem.
+
 ## Testy układu
 
 ```sh

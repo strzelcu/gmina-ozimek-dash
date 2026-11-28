@@ -8,6 +8,7 @@
     "build": "node scripts/build.mjs",
     "preview": "vite preview",
     "check": "node scripts/check-config.mjs && node --test tests/*.test.ts",
+    "test:calendars": "node --test tests/waste-calendar-import.test.mjs",
     "test:responsive": "playwright test",
     "data": "node scripts/fetch-data.mjs"
   },

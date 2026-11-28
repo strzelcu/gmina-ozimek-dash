@@ -415,6 +415,19 @@ footer p { margin-top: var(--dashboard-space-sm); }
 .watercourse{margin-top:16px;border-top:1px solid var(--border);padding-top:12px}
 .watercourse h3{display:flex;align-items:baseline;gap:8px 14px;flex-wrap:wrap;margin-bottom:8px}
 .watercourse h3 span{color:#526b80;font-size:.875rem;font-weight:400}
+.waste-calendars{margin:16px 0 22px;padding:12px 14px;border:1px solid var(--border);border-radius:11px;background:#f5f9fc}
+.waste-downloads{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.waste-download{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 14px}
+.waste-download+.waste-download{border-top:1px solid var(--border);padding-top:12px}
+.waste-download>div{min-width:0}
+.waste-download p{margin:3px 0 0;color:#526b80;font-size:.875rem;overflow-wrap:anywhere}
+.waste-download a{max-width:100%;white-space:normal}
+.waste-import-help{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:.875rem}
+.waste-import-help summary{cursor:pointer;color:#235b83;font-weight:650}
+.waste-import-help p{margin:10px 0}
+.waste-import-help dl{margin:0}
+.waste-import-help dt{margin-top:10px;font-weight:650}
+.waste-import-help dd{margin:2px 0 0}
 .waste-subsection+.waste-subsection{padding-top:18px;margin-top:18px;border-top:1px solid var(--border)}
 .waste-area{align-items:baseline;flex-wrap:wrap}
 .waste-next h4{margin:3px 0 0;font-size:1rem;font-weight:700}
