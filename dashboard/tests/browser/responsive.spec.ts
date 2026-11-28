@@ -128,7 +128,7 @@ for (const locality of localities) {
     const calendar = page.locator(".waste-calendars");
     await expect(calendar.getByRole("link", { name: "Pobierz harmonogram (.ics)" })).toHaveCount(downloads.length);
     await expect(calendar.locator(".waste-download strong")).toHaveText(downloads.map(schedule => `Rejon ${schedule.region} · ${schedule.coverage}`));
-    await expect(calendar.locator(".waste-import-help dl")).toBeHidden();
+    await expect(page.getByText("Jak zaimportować harmonogram?", { exact: true })).toHaveCount(0);
     if (!locality.waste.schedules.length) {
       await expect(summary.getByText("Brak aktualnego harmonogramu")).toBeVisible();
       await expect(page.getByText("Brak aktualnego harmonogramu w dashboardzie. Sprawdź wykaz gminy.")).toBeVisible();
@@ -226,7 +226,7 @@ test("części wsi są pod tytułem już podczas ładowania dashboardu", async (
   await expect(page.locator(".locality-heading h1 + .locality-parts")).toHaveText(names);
 });
 
-test("pobieranie dwóch kalendarzy Nowej Schodni i rozwijanie instrukcji", async ({ page }) => {
+test("pobieranie dwóch kalendarzy Nowej Schodni i wygasanie harmonogramów", async ({ page }) => {
   const locality = localities.find(entry => entry.slug === "nowa-schodnia")!;
   const now = await mockSources(page, locality);
   const today = new Date(now).toISOString().slice(0, 10);
@@ -244,16 +244,6 @@ test("pobieranie dwóch kalendarzy Nowej Schodni i rozwijanie instrukcji", async
     expect(file.suggestedFilename()).toBe(expected.fileName.split("/").at(-1));
     expect(await readFile(await file.path(), "utf8")).toBe(expected.source);
   }
-  const help = calendar.locator(".waste-import-help");
-  const summary = help.locator("summary");
-  await expect(help.locator("dl")).toBeHidden();
-  await summary.focus();
-  await page.keyboard.press("Enter");
-  await expect(help.locator("dl")).toBeVisible();
-  await expect(help.locator("dt")).toHaveText(["Google Calendar", "Outlook", "iCloud"]);
-  await page.keyboard.press("Enter");
-  await expect(help.locator("dl")).toBeHidden();
-
   const lastDay = locality.waste.schedules.map(schedule => schedule.validUntil).sort().at(-1)!;
   await page.clock.setFixedTime(Date.parse(`${lastDay}T23:59:59Z`));
   await page.reload();

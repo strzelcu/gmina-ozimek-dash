@@ -82,18 +82,6 @@ export default function WasteSection({ waste, today, weeks }: { waste: Locality[
           </li>;
         })}
       </ul>
-      <details className="waste-import-help">
-        <summary>Jak zaimportować harmonogram?</summary>
-        <p>Import zapisuje kopię terminów. Użyj osobnego kalendarza „Odpady”, żeby po zmianie harmonogramu łatwo zastąpić wcześniejsze wpisy.</p>
-        <dl>
-          <dt>Google Calendar</dt>
-          <dd>Na komputerze otwórz ustawienia Kalendarza Google i wybierz import z pliku. Wskaż pobrany plik i kalendarz docelowy. <a className="source-link" href="https://support.google.com/calendar/answer/37118?hl=pl" target="_blank" rel="noreferrer">Instrukcja Google</a></dd>
-          <dt>Outlook</dt>
-          <dd>W przeglądarce wybierz w Outlooku „Dodaj kalendarz” i wskaż pobrany plik oraz kalendarz docelowy. <a className="source-link" href="https://support.microsoft.com/en-us/outlook/import-or-subscribe-to-a-calendar-in-outlook-com-or-outlook-on-the-web" target="_blank" rel="noreferrer">Instrukcja Microsoftu</a></dd>
-          <dt>iCloud</dt>
-          <dd>Na Macu wybierz w aplikacji Kalendarz „Plik” → „Importuj” i wskaż swój kalendarz iCloud. Na iPhonie lub iPadzie otwórz plik jako załącznik w aplikacji Poczta. <a className="source-link" href="https://support.apple.com/en-ca/guide/calendar/icl1023/mac" target="_blank" rel="noreferrer">Instrukcja na Maca</a> · <a className="source-link" href="https://support.apple.com/pl-pl/guide/iphone/ipha0d932e96/27/ios/27" target="_blank" rel="noreferrer">Instrukcja na iPhone’a</a></dd>
-        </dl>
-      </details>
     </div>}
     {visible.map(week => <Schedule
       key={`${week.schedule.region}:${week.schedule.coverage}:${week.schedule.validFrom}`} week={week} today={today}

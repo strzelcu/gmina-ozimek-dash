@@ -20,7 +20,7 @@ Skopiuj [przykład](assets/szczedrzyk.example.yaml) i uzupełnij pola zgodnie ze
 ## Zachowaj zachowanie szablonu
 
 - Kafelek „Na dziś” pokazuje wszystkie odbiory od dziś do siódmego dnia włącznie, również dla kilku rejonów. Przy wspólnym terminie każdy rodzaj odpadów ma osobny wiersz z emoji w podsumowaniu i szczegółach. Daty wyświetla w strefie `Europe/Warsaw`. Temperaturę zaokrągloną do zera wyświetla jako `0°C`.
-- Kompilacja tworzy osobny plik `.ics` dla każdego harmonogramu w YAML. Każdy dzień odbioru jest jednym wydarzeniem całodniowym z listą frakcji. Po weryfikacji korekty terminów zaktualizuj `verifiedAt`. Zwinięta sekcja pod przyciskami pobrania wyjaśnia jednorazowy import do Kalendarza Google, Outlooka i iCloud.
+- Kompilacja tworzy osobny plik `.ics` dla każdego harmonogramu w YAML. Każdy dzień odbioru jest jednym wydarzeniem całodniowym z listą frakcji. Po weryfikacji korekty terminów zaktualizuj `verifiedAt`.
 - Przy czujniku spoza miejscowości etykieta „Spoza miejscowości” jest po prawej stronie nazwy. Adres ma osobny wiersz i może się zawijać. Starsze odczyty i chwilowe braki danych mają oznaczenia przy urządzeniu.
 - Kafelek wód pokazuje wodowskaz z potwierdzonym poziomem i poprawną datą pomiaru. Cieki bez takich odczytów pomija. Gdy brak wszystkich odczytów, kafelek znika po zakończeniu ładowania.
 - W katalogu rodzaj z YAML dobiera ikonę budynków dla miasta albo ikonę domu dla sołectwa. Katalog i dashboardy korzystają z `dashboard/src/components/DashboardFooter.tsx`. Stopka zawiera źródła danych, link do repozytorium, GitHub Issues, e-mail do zgłoszeń oraz informacje o braku śledzenia i wygenerowaniu strony przez AI. Linki do czujników i PRNG na dashboardzie wskazują źródła danej miejscowości.
