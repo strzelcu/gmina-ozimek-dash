@@ -2,6 +2,8 @@ schemaVersion: 1
 slug: chobie
 name: Chobie
 kind: village
+parts:
+  - Kuziory
 simc: '0501096'
 municipality: Gmina Ozimek
 region: Opolskie

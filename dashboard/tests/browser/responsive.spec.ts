@@ -19,6 +19,13 @@ async function openDashboard(page: Page, locality: Locality) {
   expect(metadata.title).toBe(`${locality.name} · Dashboard miejscowości`);
   expect(metadata.description).toContain(`${locality.name}, ${locality.municipality}.`);
   await expect(page.getByRole("heading", { level: 1, name: locality.name })).toBeVisible();
+  const parts = page.locator(".locality-heading h1 + .locality-parts");
+  if (locality.parts?.length) {
+    await expect(parts).toBeVisible();
+    await expect(parts).toHaveText(locality.parts.join(", "));
+  } else {
+    await expect(parts).toHaveCount(0);
+  }
 }
 
 async function ready(page: Page, locality: Locality) {
@@ -56,6 +63,15 @@ test("katalog miejscowości przy każdej szerokości", async ({ page }) => {
     await expect(link).toHaveAttribute("href", new URL(`${locality.slug}/`, page.url()).pathname);
     const icon = locality.kind === "city" ? "building-2" : "house";
     await expect(link.locator(`svg.lucide-${icon}`)).toHaveAttribute("aria-hidden", "true");
+    const parts = link.locator("..").locator(".locality-parts");
+    if (locality.parts?.length) {
+      const names = locality.parts.join(", ");
+      await expect(parts).toBeVisible();
+      await expect(parts).toHaveText(names);
+      await expect(link).toHaveAccessibleDescription(names);
+    } else {
+      await expect(parts).toHaveCount(0);
+    }
   }
   await checkFooter(page);
   for (const width of widths) await test.step(`${width} px`, () => checkLayout(page, width));

@@ -9,6 +9,7 @@
     "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
     "name": { "$ref": "#/definitions/label" },
     "kind": { "enum": ["city", "village"] },
+    "parts": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/label" } },
     "simc": { "type": "string", "pattern": "^[0-9]{7}$" },
     "municipality": { "$ref": "#/definitions/label" },
     "region": { "$ref": "#/definitions/label" },

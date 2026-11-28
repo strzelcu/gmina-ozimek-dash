@@ -2,6 +2,8 @@ schemaVersion: 1
 slug: dylaki
 name: Dylaki
 kind: village
+parts:
+  - Michalanka
 simc: '0501110'
 municipality: Gmina Ozimek
 region: Opolskie
