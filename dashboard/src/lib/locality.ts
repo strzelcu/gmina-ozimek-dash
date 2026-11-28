@@ -21,6 +21,7 @@ export type Locality = {
   slug: string;
   name: string;
   kind: "city" | "village";
+  parts?: string[];
   simc: string;
   municipality: string;
   region: string;

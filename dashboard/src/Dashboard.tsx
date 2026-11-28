@@ -98,6 +98,7 @@ export default function Dashboard({ locality }: { locality: Locality }) {
  return <><Header /><main>
  <div className="page-heading locality-heading">
   <div><p className="date-line">{longDay}</p><h1>{locality.name}</h1>
+   {!!locality.parts?.length && <p className="locality-parts">{locality.parts.join(", ")}</p>}
    <p className="location"><MapPin size={15} aria-hidden="true" />{locality.municipality} · {locality.region}</p>
   </div>
   <div className="refresh-area"><Button className="refresh-button" variant="outline" onClick={() => { void refresh(); }} disabled={loading}>

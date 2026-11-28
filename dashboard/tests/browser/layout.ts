@@ -23,7 +23,7 @@ export async function checkLayout(page: Page, width: number) {
       && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > tolerance;
     const outsideScrollTables = (element: Element) => !element.closest(".hourly-scroll table, .sr-only");
     const visible = (element: Element) => element.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true });
-    const panels = "header, main, footer, .card, .directory-heading, .directory-locality, .daily-summary-item, "
+    const panels = "header, main, footer, .card, .directory-heading, .directory-grid > li, .directory-locality, .daily-summary-item, "
       + ".air-station, .water-station, .warning-entry, .forecast-day > div, .weather-metrics > div, "
       + ".environment-metrics > div, .aq-legend-row > span, .waste-next, .waste-fractions > li";
 
@@ -83,6 +83,15 @@ export async function checkLayout(page: Page, width: number) {
       check(width <= 760 ? title.bottom <= refresh.top + tolerance : title.right <= refresh.left + tolerance,
         "Przycisk odświeżania w niewłaściwym miejscu względem nagłówka");
       check(visible(heading.querySelector(".location")!) === (width > 760), "Oznaczenie położenia ma niewłaściwą widoczność");
+    }
+    for (const parts of document.querySelectorAll(".locality-parts")) {
+      const container = parts.parentElement!;
+      const title = container.querySelector("h1, .directory-locality strong")!;
+      const above = container.querySelector(".directory-locality") ?? title;
+      check(parts.getBoundingClientRect().top >= above.getBoundingClientRect().bottom - tolerance,
+        "Części wsi muszą mieścić się pod odnośnikiem lub tytułem");
+      check(parseFloat(getComputedStyle(parts).fontSize) < parseFloat(getComputedStyle(title).fontSize),
+        "Części wsi muszą mieć mniejszą czcionkę od nazwy sołectwa");
     }
     for (const summary of document.querySelectorAll(".warning-entry summary")) {
       const title = summary.firstElementChild!.getBoundingClientRect();

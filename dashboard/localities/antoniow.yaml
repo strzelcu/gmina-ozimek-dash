@@ -2,6 +2,8 @@ schemaVersion: 1
 slug: antoniow
 name: Antoniów
 kind: village
+parts:
+  - Niwa Schodzieńska
 simc: '0501050'
 municipality: Gmina Ozimek
 region: Opolskie

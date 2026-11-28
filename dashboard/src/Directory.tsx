@@ -22,11 +22,14 @@ export default function Directory({ localities }: { localities: Locality[] }) {
         <ul className="directory-grid">
           {sorted.filter(locality => locality.kind === "city").concat(sorted.filter(locality => locality.kind === "village")).map(locality => {
             const { icon: Icon, label } = localityKinds[locality.kind];
+            const parts = locality.parts?.join(", ");
+            const partsId = parts ? `${locality.slug}-parts` : undefined;
             return <li key={locality.slug}>
-              <a className="directory-locality" href={`${base}${locality.slug}/`}>
+              <a className="directory-locality" href={`${base}${locality.slug}/`} aria-describedby={partsId}>
                 <span className="directory-icon"><Icon size={23} aria-hidden="true" /></span>
                 <span><strong>{locality.name}</strong><small>{label}</small></span>
               </a>
+              {parts && <p className="locality-parts" id={partsId}>{parts}</p>}
             </li>;
           })}
         </ul>

@@ -2,6 +2,12 @@ schemaVersion: 1
 slug: krasiejow
 name: Krasiejów
 kind: village
+parts:
+  - Kopalnia
+  - Myślina
+  - Nieznowice
+  - Potasznia
+  - Zamoście
 simc: '0501140'
 municipality: Gmina Ozimek
 region: Opolskie

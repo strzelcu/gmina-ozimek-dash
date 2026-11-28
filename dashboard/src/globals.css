@@ -385,7 +385,10 @@ footer p { margin-top: var(--dashboard-space-sm); }
 .directory-locality strong,.directory-locality small{display:block}
 .directory-locality strong{font-weight:700}
 .directory-locality small{font-size:.875rem;color:#526b80}
+.locality-parts{font-size:.875rem;line-height:1.4;color:#526b80;overflow-wrap:anywhere}
+.directory-grid .locality-parts{margin:6px 16px 0}
 .locality-heading h1{font-size:clamp(2.15rem,5vw,3.25rem);margin:3px 0 7px}
+.locality-heading .locality-parts{margin:0 0 6px}
 .locality-heading .location{margin:0}
 .summary-waste{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 .summary-waste+.summary-waste{margin-top:6px;border-top:1px solid #dce5ee;padding-top:8px}

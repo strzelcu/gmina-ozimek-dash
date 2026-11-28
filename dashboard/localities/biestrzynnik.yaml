@@ -2,6 +2,9 @@ schemaVersion: 1
 slug: biestrzynnik
 name: Biestrzynnik
 kind: village
+parts:
+  - Paliwoda
+  - Wydzieracz
 simc: '0501067'
 municipality: Gmina Ozimek
 region: Opolskie
